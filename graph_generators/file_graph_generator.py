@@ -109,6 +109,7 @@ def get_parent_package(absolute_path_to_project: str, path: str, project: Projec
             parent_package = get_parent_package(absolute_path_to_project, new_path, project, function_graph)
             if parent_package is not None:
                 parent_package.connection.append(Connection(function_graph.nodes[new_node], ConnectionType.CONTAINS))
+                function_graph.nodes[new_node].parent_module = parent_package
         return function_graph.nodes[new_node]
     return get_parent_package(absolute_path_to_project, new_path, project, function_graph)
 
@@ -133,6 +134,7 @@ def create_function_graph(absolute_path_to_project: str) -> Graph:
         parent_package = get_parent_package(absolute_path_to_project, node.path, project, function_graph)
         if parent_package is not None:
             parent_package.connection.append(Connection(node, ConnectionType.CONTAINS))
+            node.parent_module = parent_package
 
     for node_name, dependencies in consistent_output.items():
         for dependency in dependencies:
@@ -184,5 +186,5 @@ def create_files_classes_graphs(complete_graph: Graph, package: str) -> dict[str
 
 if __name__ == '__main__':
     # dump_call_function_json("../test_project", False)
-    complete_graph = create_function_graph("../test_project")
+    complete_graph = create_function_graph("test_project")
     pkg_graph =  create_packages_graph(complete_graph)
