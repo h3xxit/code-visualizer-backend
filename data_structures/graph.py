@@ -36,8 +36,8 @@ class Node(BaseModel):
     node_type: NodeType
     connection: list[Connection]
     path: str
-    start_line: int = -1
-    end_line: int = -1
+    #start_line: int = -1
+    #end_line: int = -1
 
     def __init__(self, name: str, node_type: NodeType, path: str):
         super().__init__(name=name, description="", node_type=node_type, connection=[], path=path)

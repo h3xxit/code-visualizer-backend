@@ -114,7 +114,7 @@ def get_parent_package(absolute_path_to_project: str, path: str, project: Projec
     return get_parent_package(absolute_path_to_project, new_path, project, function_graph)
 
 
-def create_function_graph(absolute_path_to_project: str):
+def create_function_graph(absolute_path_to_project: str) -> Graph:
     absolute_path_to_project = os.path.normpath(absolute_path_to_project)
     project: Project = read_project_structure(absolute_path_to_project)
     entry_points = project.files.keys()
@@ -144,6 +144,8 @@ def create_function_graph(absolute_path_to_project: str):
     with open("../graph.json", "w+") as f:
         f.write(filter_functions(function_graph, "diagram").model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))
+
+    return function_graph
 
 
 # dump_call_function_json("../test_project", False)
