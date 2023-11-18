@@ -9,12 +9,11 @@ import dotenv
 class Annotator:
     def __init__(self, graph: Graph):
         self.graph = graph
-        # self.completed: dict[str, bool] = dict()
         self.in_progress: dict[str, bool] = dict()
 
     def get_function_annotation(self, node: Node) -> str:
         # check cache
-        if node.description != "":  # node.name in self.completed and self.completed[node.name]:
+        if node.description != "":
             return node.description
 
         # external libraries
@@ -63,6 +62,7 @@ class Annotator:
 
         if node.description == "":
             node.description = "Function is defined in a parent class"
+        self.in_progress[node.name] = False
 
 
 if __name__ == "__main__":
