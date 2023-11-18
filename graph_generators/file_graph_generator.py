@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from data_structures.graph import Graph, Node, Connection
 from data_structures.project import Project, File, Module
@@ -56,14 +57,7 @@ def filter_functions(function_graph: Graph, prefix: str) -> Graph:
     return filtered_function_graph
 
 
-def create_function_graph(absolute_path_to_project: str):
-    entry_points = read_project_structure(absolute_path_to_project).files.keys()
-    call_graph = CallGraphGenerator(
-        entry_points, absolute_path_to_project, -1, CALL_GRAPH_OP
-    )
-    call_graph.analyze()
-    formatter = formats.Simple(call_graph)
-    output: dict[str, list[str]] = formatter.generate()
+def fix_naming_inconsistencies(output: dict[str, list[str]]) -> dict[str, list[str]]:
     consistent_output: dict[str, list[str]] = dict()
     for key, value in output.items():
         new_key = fix_slash_naming(key)
@@ -71,18 +65,84 @@ def create_function_graph(absolute_path_to_project: str):
             consistent_output[new_key] += list(fix_slash_naming(out) for out in output[key])
         else:
             consistent_output[new_key] = list(fix_slash_naming(out) for out in output[key])
+    return consistent_output
+
+
+def add_parent_nodes(absolute_path_to_project: str, node_name: str, project: Project, function_graph: Graph,
+                     path_of_file_containing_node: str):
+    path = absolute_path_to_project + "\\" + node_name.replace(".", "\\") + ".py"
+    current_node = node_name
+    while path not in project.files and path != ".py":
+        new_path = os.path.dirname(path) + ".py"
+        new_node = new_path.replace(absolute_path_to_project + "\\", "").replace("\\", ".").replace(".py", "")
+        if new_path not in project.files:
+            function_graph.nodes[new_node] = Node(new_node, "class", path_of_file_containing_node)
+        else:
+            function_graph.nodes[new_node] = Node(new_node, "file", path_of_file_containing_node)
+        function_graph.nodes[new_node].connection.append(Connection(function_graph.nodes[current_node], "define"))
+        path = new_path
+        current_node = new_node
+
+
+def add_file_class_and_functions(function_graph: Graph, consistent_output: dict[str, list[str]],
+                                 absolute_path_to_project: str, project: Project):
+    for node_name in consistent_output.keys():
+        file_path = absolute_path_to_project + "\\" + node_name.replace(".", "\\") + ".py"
+        while file_path not in project.files and file_path != ".py":
+            file_path = os.path.dirname(file_path) + ".py"
+        if file_path == ".py":
+            file_path = ""
+        if node_name not in function_graph.nodes:
+            function_graph.nodes[node_name] = Node(node_name, "function", file_path)
+
+        if len(function_graph.nodes[node_name].connection) == 0:
+            add_parent_nodes(absolute_path_to_project, node_name, project, function_graph, file_path)
+
+
+def get_parent_package(absolute_path_to_project: str, path: str, project: Project, function_graph: Graph) -> Optional[Node]:
+    new_path = os.path.dirname(path)
+    new_node = new_path.replace(absolute_path_to_project + "\\", "").replace("\\", ".")
+    if new_path == "":
+        return None
+    if new_path + "\\__init__.py" in project.files:
+        if new_node not in function_graph.nodes:
+            function_graph.nodes[new_node] = Node(new_node, "package", new_path + "\\__init__.py")
+        if len(function_graph.nodes[new_node].connection) == 0:
+            parent_package = get_parent_package(absolute_path_to_project, new_path, project, function_graph)
+            if parent_package is not None:
+                parent_package.connection.append(Connection(function_graph.nodes[new_node], "contains"))
+        return function_graph.nodes[new_node]
+    return get_parent_package(absolute_path_to_project, new_path, project, function_graph)
+
+
+def create_function_graph(absolute_path_to_project: str):
+    absolute_path_to_project = os.path.normpath(absolute_path_to_project)
+    project: Project = read_project_structure(absolute_path_to_project)
+    entry_points = project.files.keys()
+    call_graph = CallGraphGenerator(
+        entry_points, absolute_path_to_project, -1, CALL_GRAPH_OP
+    )
+    call_graph.analyze()
+    formatter = formats.Simple(call_graph)
+    output: dict[str, list[str]] = formatter.generate()
+    consistent_output: dict[str, list[str]] = fix_naming_inconsistencies(output)
 
     function_graph = Graph()
-    for node in consistent_output.keys():
-        function_graph.nodes[node] = Node(node)
+    add_file_class_and_functions(function_graph, consistent_output, absolute_path_to_project, project)
 
-    for node, dependencies in consistent_output.items():
+    file_nodes = list(node for node in function_graph.nodes.values() if node.node_type == "file")
+    for node in file_nodes:
+        parent_package = get_parent_package(absolute_path_to_project, node.path, project, function_graph)
+        if parent_package is not None:
+            parent_package.connection.append(Connection(node, "contains"))
+
+    for node_name, dependencies in consistent_output.items():
         for dependency in dependencies:
-            function_graph.nodes[node].connection.append(Connection(function_graph.nodes[dependency], "uses"))
-
+            function_graph.nodes[node_name].connection.append(Connection(function_graph.nodes[dependency], "uses"))
 
     with open("../graph.json", "w+") as f:
-        f.write(filter_functions(function_graph, "ai.AutoGen").model_dump_json(indent=2))
+        f.write(filter_functions(function_graph, "diagram").model_dump_json(indent=2))
+        # f.write(function_graph.model_dump_json(indent=2))
 
 
 # dump_call_function_json("../test_project", False)

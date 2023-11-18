@@ -39,6 +39,7 @@ class Connection(BaseModel):
 
 class Node(BaseModel):
     name: str
+    node_type: str
     description: str
     node_type : NodeType
     connection: list[Connection]
