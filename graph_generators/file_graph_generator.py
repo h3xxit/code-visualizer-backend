@@ -203,7 +203,7 @@ def create_function_graph(complete_graph: Graph, file_class: str) -> dict[str,Gr
                      
     return function_graph
 
-def create_files_classes_graphs(complete_graph: Graph, package: str) -> dict[str,Graph]:
+def create_files_classes_graphs(complete_graph: Graph, package: str) -> Graph:
     file_classes_graph = Graph()
     for node_name, node in complete_graph.nodes.items():
         if node_name == package:
