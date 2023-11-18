@@ -16,11 +16,13 @@ class Connection(BaseModel):
 
 class Node(BaseModel):
     name: str
+    node_type: str
     description: str
     connection: list[Connection]
+    path: str
 
-    def __init__(self, name):
-        super().__init__(name=name, description="", connection=[])
+    def __init__(self, name: str, node_type: str, path: str):
+        super().__init__(name=name, node_type=node_type, description="", connection=[], path=path)
 
 
 class Graph(BaseModel):

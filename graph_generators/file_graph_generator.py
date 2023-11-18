@@ -57,7 +57,9 @@ def filter_functions(function_graph: Graph, prefix: str) -> Graph:
 
 
 def create_function_graph(absolute_path_to_project: str):
-    entry_points = read_project_structure(absolute_path_to_project).files.keys()
+    absolute_path_to_project = os.path.normpath(absolute_path_to_project)
+    project: Project = read_project_structure(absolute_path_to_project)
+    entry_points = project.files.keys()
     call_graph = CallGraphGenerator(
         entry_points, absolute_path_to_project, -1, CALL_GRAPH_OP
     )
@@ -74,15 +76,35 @@ def create_function_graph(absolute_path_to_project: str):
 
     function_graph = Graph()
     for node in consistent_output.keys():
-        function_graph.nodes[node] = Node(node)
+        file_path = absolute_path_to_project + "\\" + node.replace(".", "\\") + ".py"
+        while file_path not in project.files and file_path != ".py":
+            file_path = os.path.dirname(file_path) + ".py"
+        if file_path == ".py":
+            file_path = ""
+
+        if node not in function_graph.nodes:
+            function_graph.nodes[node] = Node(node, "function", file_path)
+        if len(function_graph.nodes[node].connection) == 0:
+            path = absolute_path_to_project + "\\" + node.replace(".", "\\") + ".py"
+            current_node = node
+            while path not in project.files and path != ".py":
+                new_path = os.path.dirname(path) + ".py"
+                new_node = new_path.replace(absolute_path_to_project + "\\", "").replace("\\", ".").replace(".py", "")
+                if new_path not in project.files:
+                    function_graph.nodes[new_node] = Node(new_node, "class", file_path)
+                else:
+                    function_graph.nodes[new_node] = Node(new_node, "file", file_path)
+                function_graph.nodes[new_node].connection.append(Connection(function_graph.nodes[current_node], "define"))
+                path = new_path
+                current_node = new_node
 
     for node, dependencies in consistent_output.items():
         for dependency in dependencies:
             function_graph.nodes[node].connection.append(Connection(function_graph.nodes[dependency], "uses"))
 
-
     with open("../graph.json", "w+") as f:
         f.write(filter_functions(function_graph, "ai.AutoGen").model_dump_json(indent=2))
+        # f.write(function_graph.model_dump_json(indent=2))
 
 
 # dump_call_function_json("../test_project", False)
