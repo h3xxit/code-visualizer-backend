@@ -1,7 +1,7 @@
 from functools import reduce
 
 from data_structures.graph import NodeType, ConnectionType, Graph, Node
-from graph_generators.file_graph_generator import create_function_graph, get_slash
+from graph_generators.file_graph_generator import get_slash, create_complete_graph
 from graph_generators.openAiIntegration import annotate_file
 import dotenv
 
@@ -67,7 +67,7 @@ class Annotator:
 
 if __name__ == "__main__":
     dotenv.load_dotenv()
-    graph = create_function_graph("../test_project")
+    graph = create_complete_graph("../test_project")
     annotator = Annotator(graph)
 
     annotator.get_function_annotation(graph.nodes["diagram.BaseNodes.StarterNode._getVariable"])
