@@ -204,17 +204,25 @@ def create_function_graph(complete_graph: Graph, file_class: str) -> dict[str,Gr
     return function_graph
 
 def create_files_classes_graphs(complete_graph: Graph, package: str) -> dict[str,Graph]:
-    # files_classes_graphs : dict[str,Graph] = {}
-    # for node_name, node in complete_graph.nodes.items():
-    #     if node.node_type == NodeType.FILE or node.node_type == NodeType.CLASS:
-    #         files_classes_graphs[node_name.parent_module.name] = Graph()
-    #         files_classes_graphs[node_name].nodes[node_name] = node.model_copy()
-    #         files_classes_graphs[node_name].nodes[node_name].connection = []
-    #         files_classes_graphs[node_name].nodes[node_name].connection.append(Connection(node, ConnectionType.DEFINES))
-    #         for connection in node.connection:
-    #             if connection.connection_type == ConnectionType.DEFINES:
-    #                 files_classes_graphs[node_name].nodes[node_name].connection.append(connection.next_node)
-    pass
+    file_classes_graph = Graph()
+    for node_name, node in complete_graph.nodes.items():
+        if node_name == package:
+            file_classes_graph.nodes[node_name] = node
+            stack = [node]
+            while len(stack) > 0:
+                current_node = stack.pop(-1)
+                for connection in current_node.connection:
+                    if connection.next_node.name.contains(package):
+                        file_classes_graph.nodes[connection.next_node.name] = connection.next_node
+                        stack.append(connection.next_node)
+
+            break
+
+    with open("../graph_files_classes.json", "w+") as f:
+        f.write(file_classes_graph.model_dump_json(indent=2))
+        # f.write(function_graph.model_dump_json(indent=2))
+                        
+    return file_classes_graph
 
 if __name__ == '__main__':
     # dump_call_function_json("../test_project", False)
