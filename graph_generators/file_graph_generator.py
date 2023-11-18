@@ -113,7 +113,7 @@ def get_parent_package(absolute_path_to_project: str, path: str, project: Projec
     return get_parent_package(absolute_path_to_project, new_path, project, function_graph)
 
 
-def create_function_graph(absolute_path_to_project: str):
+def create_function_graph(absolute_path_to_project: str) -> Graph:
     absolute_path_to_project = os.path.normpath(absolute_path_to_project)
     project: Project = read_project_structure(absolute_path_to_project)
     entry_points = project.files.keys()
@@ -142,7 +142,47 @@ def create_function_graph(absolute_path_to_project: str):
     with open("../graph.json", "w+") as f:
         f.write(filter_functions(function_graph, "diagram").model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))
+    
+    return function_graph
 
 
-# dump_call_function_json("../test_project", False)
-create_function_graph("../test_project")
+def create_packages_graph(complete_graph: Graph) -> Graph:
+    packages_graph = Graph()
+    for node_name, node in complete_graph.nodes.items():
+        if node.node_type == NodeType.MODULE:
+            packages_graph.nodes[node_name] = node.model_copy()
+            packages_graph.nodes[node_name].connection = []
+
+    for node_name, node in complete_graph.nodes.items():
+        if node.node_type == NodeType.MODULE:
+            stack = [node]
+            while len(stack) > 0:
+                current_node = stack.pop()
+                for connection in current_node.connection:
+                    if connection.connection_type == ConnectionType.USES and not connection.next_node.parent_module.name.contains(node_name):
+                        packages_graph.nodes[node_name].connection.append(connection.next_node.parent_module)
+                    else:
+                        stack.append(connection.next_node)
+                        
+    return packages_graph
+
+def create_function_graphs(complete_graphs: Graph) -> dict[str,Graph]:
+    pass
+
+def create_files_classes_graphs(complete_graph: Graph, package: str) -> dict[str,Graph]:
+    # files_classes_graphs : dict[str,Graph] = {}
+    # for node_name, node in complete_graph.nodes.items():
+    #     if node.node_type == NodeType.FILE or node.node_type == NodeType.CLASS:
+    #         files_classes_graphs[node_name.parent_module.name] = Graph()
+    #         files_classes_graphs[node_name].nodes[node_name] = node.model_copy()
+    #         files_classes_graphs[node_name].nodes[node_name].connection = []
+    #         files_classes_graphs[node_name].nodes[node_name].connection.append(Connection(node, ConnectionType.DEFINES))
+    #         for connection in node.connection:
+    #             if connection.connection_type == ConnectionType.DEFINES:
+    #                 files_classes_graphs[node_name].nodes[node_name].connection.append(connection.next_node)
+    pass
+
+if __name__ == '__main__':
+    # dump_call_function_json("../test_project", False)
+    complete_graph = create_function_graph("../test_project")
+    pkg_graph =  create_packages_graph(complete_graph)
