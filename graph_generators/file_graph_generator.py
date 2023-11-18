@@ -1,6 +1,6 @@
 import os
 
-from data_structures.file_graph import FileGraph
+from data_structures.graph import FileGraph
 from data_structures.project import Project, File, Module
 from pycg.pycg import CallGraphGenerator
 from pycg.utils.constants import CALL_GRAPH_OP
