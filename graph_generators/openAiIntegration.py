@@ -16,7 +16,7 @@ def annotate_file(file_content: str, function_call_desc: str) -> dict[str, list]
             "type": "function",
             "function": {
                 "name": "function_description_reader",
-                "description": "Describes each function and method in the provided code in 2 short sentences. The name should be prefixed by the class name, if the method is in a class.",
+                "description": "Describes each function and method in the provided code in 2 short sentences. The name should be prefixed by the class name, in the format 'class.function_name'.",
                 "parameters": {
                     "type": "object",
                     "properties": {

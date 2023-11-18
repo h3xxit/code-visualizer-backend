@@ -1,0 +1,143 @@
+{
+  "nodes": {
+    "diagram.TextNodes": {
+      "name": "diagram.TextNodes",
+      "node_type": 1,
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.StartsWithNode",
+          "connection_type": 1
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.StartsWithNode": {
+      "name": "diagram.TextNodes.StartsWithNode",
+      "node_type": 3,
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.StartsWithNode.elseBranch",
+          "connection_type": 1
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.StartsWithNode.elseBranch": {
+      "name": "diagram.TextNodes.StartsWithNode.elseBranch",
+      "node_type": 2,
+      "description": "Returns a dictionary with the 'else' branch value from the input.",
+      "connection": [],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.TextNode.__init__": {
+      "name": "diagram.TextNodes.TextNode.__init__",
+      "node_type": 2,
+      "description": "Initializes a TextNode object.",
+      "connection": [
+        {
+          "next_node": "<builtin>.super",
+          "connection_type": 4
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.TextNode": {
+      "name": "diagram.TextNodes.TextNode",
+      "node_type": 3,
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.TextNode.run",
+          "connection_type": 1
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.TextNode.run": {
+      "name": "diagram.TextNodes.TextNode.run",
+      "node_type": 2,
+      "description": "Runs the TextNode and returns a dictionary with the text.",
+      "connection": [],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.NumberNode.__init__": {
+      "name": "diagram.TextNodes.NumberNode.__init__",
+      "node_type": 2,
+      "description": "Initializes a NumberNode object.",
+      "connection": [
+        {
+          "next_node": "<builtin>.super",
+          "connection_type": 4
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.NumberNode": {
+      "name": "diagram.TextNodes.NumberNode",
+      "node_type": 3,
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.NumberNode.run",
+          "connection_type": 1
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.NumberNode.run": {
+      "name": "diagram.TextNodes.NumberNode.run",
+      "node_type": 2,
+      "description": "Runs the NumberNode and returns a dictionary with the number.",
+      "connection": [],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.ConcatenateNode.__init__": {
+      "name": "diagram.TextNodes.ConcatenateNode.__init__",
+      "node_type": 2,
+      "description": "Initializes a ConcatenateNode object.",
+      "connection": [
+        {
+          "next_node": "<builtin>.super",
+          "connection_type": 4
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.ConcatenateNode": {
+      "name": "diagram.TextNodes.ConcatenateNode",
+      "node_type": 3,
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.ConcatenateNode.run",
+          "connection_type": 1
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.ConcatenateNode.run": {
+      "name": "diagram.TextNodes.ConcatenateNode.run",
+      "node_type": 2,
+      "description": "Runs the ConcatenateNode and returns a dictionary with the concatenated text.",
+      "connection": [],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.StartsWithNode.condition": {
+      "name": "diagram.TextNodes.StartsWithNode.condition",
+      "node_type": 2,
+      "description": "Checks if the input text starts with the given prefix.",
+      "connection": [],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.StartsWithNode.thenBranch": {
+      "name": "diagram.TextNodes.StartsWithNode.thenBranch",
+      "node_type": 2,
+      "description": "Returns a dictionary with the 'then' branch value from the input.",
+      "connection": [],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    }
+  },
+  "path_to_project": "..\\test_project"
+}

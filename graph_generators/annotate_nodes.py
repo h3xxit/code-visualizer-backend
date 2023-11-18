@@ -1,9 +1,13 @@
+import os
 from functools import reduce
 
 from data_structures.graph import NodeType, ConnectionType, Graph, Node
-from graph_generators.file_graph_generator import get_slash, create_complete_graph
 from graph_generators.openAiIntegration import annotate_file
 import dotenv
+
+
+def get_slash():
+    return os.path.normpath("/")
 
 
 class Annotator:
@@ -12,12 +16,15 @@ class Annotator:
         self.in_progress: dict[str, bool] = dict()
 
     def get_function_annotation(self, node: Node) -> str:
+        if node.node_type != NodeType.FUNCTION:
+            return ""
+
         # check cache
         if node.description != "":
             return node.description
 
         # external libraries
-        if node.path == "<external>":
+        if node.path == "<external>" or node.path == "":
             node.description = "External node"
             return node.description
 
@@ -46,31 +53,25 @@ class Annotator:
             if connection.connection_type == ConnectionType.USES:
                 other_node = connection.next_node
                 descriptions_of_functions_used.append(
-                    "Description for " + other_node.name + ":\n" + self.get_function_annotation(other_node)
+                    f"Description for {other_node.name}:\n{self.get_function_annotation(other_node)}"
                 )
 
         # generate description with openai
         all_descriptions = reduce(lambda x, y: x + "\n\n" + y, descriptions_of_functions_used, "")
         response = annotate_file(file_content, all_descriptions)
+        file_of_node = node.path.replace(self.graph.path_to_project + get_slash(), "").replace(get_slash(), ".").replace(".py", "")
         for function_description in response["function_descriptions"]:
-            new_node_name = node.path.replace(graph.path_to_project + get_slash(), "").replace(get_slash(), ".").replace(
-                ".py", "") + "." + function_description["name"]
-            if new_node_name in graph.nodes:
-                graph.nodes[new_node_name].description = function_description["description"]
+            new_node_name = file_of_node + "." + function_description["name"]
+            if new_node_name in self.graph.nodes:
+                self.graph.nodes[new_node_name].description = function_description["description"]
             else:
                 print(f"ERROR: Could not assign description to node {new_node_name}")
+
+        for node_name, current_node in self.graph.nodes.items():
+            if node_name.startswith(file_of_node) and current_node.description == "":
+                if current_node.node_type == NodeType.FUNCTION:
+                    current_node.description = "Function is defined in a parent class"
 
         if node.description == "":
             node.description = "Function is defined in a parent class"
         self.in_progress[node.name] = False
-
-
-if __name__ == "__main__":
-    dotenv.load_dotenv()
-    graph = create_complete_graph("../test_project")
-    annotator = Annotator(graph)
-
-    annotator.get_function_annotation(graph.nodes["diagram.BaseNodes.StarterNode._getVariable"])
-    with open("../graph.json", "w+") as f:
-        f.write(graph.model_dump_json(indent=2))
-

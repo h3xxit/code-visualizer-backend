@@ -1,12 +1,16 @@
 import os
 from typing import Optional
 
+import dotenv
+
 from data_structures.graph import Graph, Node, Connection, NodeType, ConnectionType
 from data_structures.project import Project, File, Module
 from pycg.pycg import CallGraphGenerator
 from pycg.utils.constants import CALL_GRAPH_OP
 from pycg import formats
 import json
+
+from graph_generators.annotate_nodes import Annotator
 
 
 def read_project_structure(absolute_path_to_project: str) -> Project:
@@ -23,8 +27,10 @@ def read_project_structure(absolute_path_to_project: str) -> Project:
 def parseFileImports(file: File, project: Project):
     pass
 
+
 def get_slash():
     return os.path.normpath("/")
+
 
 def dump_call_function_json(absolute_path_to_project: str, fastenFormat: bool):
     entry_points = read_project_structure(absolute_path_to_project).files.keys()
@@ -72,7 +78,8 @@ def add_parent_nodes(absolute_path_to_project: str, node_name: str, project: Pro
     current_node = node_name
     while path not in project.files and path != ".py":
         new_path = os.path.dirname(path) + ".py"
-        new_node = new_path.replace(absolute_path_to_project + get_slash(), "").replace(get_slash(), ".").replace(".py", "")
+        new_node = new_path.replace(absolute_path_to_project + get_slash(), "").replace(get_slash(), ".").replace(".py",
+                                                                                                                  "")
         if new_path not in project.files:
             function_graph.nodes[new_node] = Node(new_node, NodeType.CLASS, path_of_file_containing_node)
         else:
@@ -86,7 +93,8 @@ def add_parent_nodes(absolute_path_to_project: str, node_name: str, project: Pro
 def add_file_class_and_functions(function_graph: Graph, consistent_output: dict[str, list[str]],
                                  absolute_path_to_project: str, project: Project):
     for node_name in consistent_output.keys():
-        if absolute_path_to_project + get_slash() + node_name.replace(".", get_slash()) + get_slash() + '__init__.py' in project.files:
+        if absolute_path_to_project + get_slash() + node_name.replace(".",
+                                                                      get_slash()) + get_slash() + '__init__.py' in project.files:
             continue
         file_path = absolute_path_to_project + get_slash() + node_name.replace(".", get_slash()) + ".py"
         while file_path not in project.files and file_path != ".py":
@@ -148,7 +156,7 @@ def create_complete_graph(absolute_path_to_project: str) -> Graph:
     with open("../graph.json", "w+") as f:
         f.write(filter_functions(function_graph, "diagram").model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))
-    
+
     return function_graph
 
 
@@ -165,45 +173,63 @@ def create_packages_graph(complete_graph: Graph) -> Graph:
             while len(stack) > 0:
                 current_node = stack.pop(-1)
                 for connection in current_node.connection:
-                    if connection.connection_type == ConnectionType.USES and (connection.next_node.parent_module is None or not connection.next_node.parent_module.name.contains(node_name)):
-                        used_module = connection.next_node.parent_module if connection.next_node.parent_module is not None else Node(connection.next_node.name.split(".")[0], NodeType.MODULE, "<external>")
+                    if connection.connection_type == ConnectionType.USES and (
+                            connection.next_node.parent_module is None or not connection.next_node.parent_module.name.contains(
+                            node_name)):
+                        used_module = connection.next_node.parent_module if connection.next_node.parent_module is not None else Node(
+                            connection.next_node.name.split(".")[0], NodeType.MODULE, "<external>")
                         for connection in packages_graph.nodes[node_name].connection:
                             if connection.next_node.name == used_module.name:
                                 break
                         else:
-                            packages_graph.nodes[node_name].connection.append(Connection(used_module, ConnectionType.USES))
+                            packages_graph.nodes[node_name].connection.append(
+                                Connection(used_module, ConnectionType.USES))
                     else:
                         stack.append(connection.next_node)
-    
+
     with open("../graph_packages.json", "w+") as f:
         f.write(packages_graph.model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))
-                        
+
     return packages_graph
 
+
 # for file or class
-def create_function_graph(complete_graph: Graph, file_class: str) -> dict[str,Graph]:
-    function_graph = Graph()
+def create_function_graph(complete_graph: Graph, file_class: str) -> Graph:
+    function_graph = Graph(complete_graph.path_to_project)
+    file_class_node: Optional[Node] = None
     for node_name, node in complete_graph.nodes.items():
         if node_name == file_class:
             function_graph.nodes[node_name] = node
-            stack = [node]
-            while len(stack) > 0:
-                current_node = stack.pop(-1)
-                for connection in current_node.connection:
-                    if connection.connection_type == ConnectionType.USES:
-                        function_graph.nodes[connection.next_node.name] = connection.next_node
-                    elif connection.connection_type == ConnectionType.DEFINES:
-                        stack.append(connection.next_node)
-                        function_graph.nodes[connection.next_node.name] = connection.next_node
+            file_class_node = node
             break
+    if file_class_node is None:
+        return function_graph
+    stack = [file_class_node]
+    while len(stack) > 0:
+        current_node = stack.pop(-1)
+        for connection in current_node.connection:
+            if connection.connection_type == ConnectionType.USES:
+                function_graph.nodes[connection.next_node.name] = connection.next_node
+            elif connection.connection_type == ConnectionType.DEFINES:
+                stack.append(connection.next_node)
+                function_graph.nodes[connection.next_node.name] = connection.next_node
+    for node_name, node in complete_graph.nodes.items():
+        if node_name.startswith(file_class_node.name) and node_name not in function_graph:
+            function_graph.nodes[node_name] = node
+
+    annotator = Annotator(function_graph)
+    for node_name in function_graph.nodes:
+        if function_graph.nodes[node_name].node_type == NodeType.FUNCTION:
+            annotator.get_function_annotation(function_graph.nodes[node_name])
     with open("../graph_function.json", "w+") as f:
         f.write(function_graph.model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))
-                     
+
     return function_graph
 
-def create_files_classes_graphs(complete_graph: Graph, package: str) -> dict[str,Graph]:
+
+def create_files_classes_graphs(complete_graph: Graph, package: str) -> dict[str, Graph]:
     # files_classes_graphs : dict[str,Graph] = {}
     # for node_name, node in complete_graph.nodes.items():
     #     if node.node_type == NodeType.FILE or node.node_type == NodeType.CLASS:
@@ -216,8 +242,10 @@ def create_files_classes_graphs(complete_graph: Graph, package: str) -> dict[str
     #                 files_classes_graphs[node_name].nodes[node_name].connection.append(connection.next_node)
     pass
 
+
 if __name__ == '__main__':
+    dotenv.load_dotenv()
     # dump_call_function_json("../test_project", False)
-    complete_graph = create_complete_graph("test_project")
+    test_complete_graph = create_complete_graph("../test_project")
     # pkg_graph =  create_packages_graph(complete_graph)
-    function_graph = create_function_graph(complete_graph, "ai.AutoGen")
+    test_graph = create_function_graph(test_complete_graph, "diagram.TextNodes")
