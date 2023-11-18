@@ -54,6 +54,7 @@ class Node(BaseModel):
 
 class Graph(BaseModel):
     nodes: dict[str, Node]
+    path_to_project: str
 
-    def __init__(self):
-        super().__init__(nodes=dict())
+    def __init__(self, path_to_project):
+        super().__init__(nodes=dict(), path_to_project=path_to_project)

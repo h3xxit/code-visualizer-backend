@@ -48,7 +48,7 @@ def fix_slash_naming(inconsistent_name: str) -> str:
 
 
 def filter_functions(function_graph: Graph, prefix: str) -> Graph:
-    filtered_function_graph = Graph()
+    filtered_function_graph = Graph(function_graph.path_to_project)
     for node_name, node in function_graph.nodes.items():
         if node_name.startswith(prefix):
             filtered_function_graph.nodes[node_name] = node
@@ -130,7 +130,7 @@ def create_function_graph(absolute_path_to_project: str) -> Graph:
     output: dict[str, list[str]] = formatter.generate()
     consistent_output: dict[str, list[str]] = fix_naming_inconsistencies(output)
 
-    function_graph = Graph()
+    function_graph = Graph(absolute_path_to_project)
     add_file_class_and_functions(function_graph, consistent_output, absolute_path_to_project, project)
 
     file_nodes = list(node for node in function_graph.nodes.values() if node.node_type == NodeType.FILE)
@@ -153,7 +153,7 @@ def create_function_graph(absolute_path_to_project: str) -> Graph:
 
 
 def create_packages_graph(complete_graph: Graph) -> Graph:
-    packages_graph = Graph()
+    packages_graph = Graph(complete_graph.path_to_project)
     for node_name, node in complete_graph.nodes.items():
         if node.node_type == NodeType.MODULE:
             packages_graph.nodes[node_name] = node.model_copy()

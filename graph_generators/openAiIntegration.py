@@ -1,8 +1,6 @@
 import openai
 import json
 
-from openai.types.chat import ChatCompletionFunctionMessageParam
-
 function_description_promt = "You will recieve the code of a python file as input and a short description of each internal and external function which is called from the code. " + \
                              "Extract the functions and methods defined in the code and summarize each of them in 2 short sentences."
 
@@ -53,6 +51,6 @@ def annotate_file(file_content: str, function_call_desc: str) -> dict[str, list]
     )
     print("Finished openAI request")
 
-    json_response = response.choices[0].message["tool_calls"][0]["function"]["arguments"]
+    json_response = response.choices[0].message.tool_calls[0].function.arguments
     functions: dict[str, list] = json.loads(json_response)
     return functions

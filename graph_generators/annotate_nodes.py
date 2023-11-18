@@ -1,7 +1,7 @@
 from functools import reduce
 
 from data_structures.graph import NodeType, ConnectionType, Graph, Node
-from graph_generators.file_graph_generator import create_function_graph
+from graph_generators.file_graph_generator import create_function_graph, get_slash
 from graph_generators.openAiIntegration import annotate_file
 import dotenv
 
@@ -14,7 +14,12 @@ class Annotator:
 
     def get_function_annotation(self, node: Node) -> str:
         # check cache
-        if node.description == "":  # node.name in self.completed and self.completed[node.name]:
+        if node.description != "":  # node.name in self.completed and self.completed[node.name]:
+            return node.description
+
+        # external libraries
+        if node.path == "<external>":
+            node.description = "External node"
             return node.description
 
         # check for circular dependency
@@ -49,10 +54,15 @@ class Annotator:
         all_descriptions = reduce(lambda x, y: x + "\n\n" + y, descriptions_of_functions_used, "")
         response = annotate_file(file_content, all_descriptions)
         for function_description in response["function_descriptions"]:
-            described_node = function_description.name
+            new_node_name = node.path.replace(graph.path_to_project + get_slash(), "").replace(get_slash(), ".").replace(
+                ".py", "") + "." + function_description["name"]
+            if new_node_name in graph.nodes:
+                graph.nodes[new_node_name].description = function_description["description"]
+            else:
+                print(f"ERROR: Could not assign description to node {new_node_name}")
 
-        node.description = "Yes"
-        # self.completed[node.name] = True
+        if node.description == "":
+            node.description = "Function is defined in a parent class"
 
 
 if __name__ == "__main__":
@@ -61,3 +71,6 @@ if __name__ == "__main__":
     annotator = Annotator(graph)
 
     annotator.get_function_annotation(graph.nodes["diagram.BaseNodes.StarterNode._getVariable"])
+    with open("../graph.json", "w+") as f:
+        f.write(graph.model_dump_json(indent=2))
+
