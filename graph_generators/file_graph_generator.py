@@ -23,6 +23,8 @@ def read_project_structure(absolute_path_to_project: str) -> Project:
 def parseFileImports(file: File, project: Project):
     pass
 
+def get_slash():
+    return os.path.normpath("/")
 
 def dump_call_function_json(absolute_path_to_project: str, fastenFormat: bool):
     entry_points = read_project_structure(absolute_path_to_project).files.keys()
@@ -66,11 +68,11 @@ def fix_naming_inconsistencies(output: dict[str, list[str]]) -> dict[str, list[s
 
 def add_parent_nodes(absolute_path_to_project: str, node_name: str, project: Project, function_graph: Graph,
                      path_of_file_containing_node: str):
-    path = absolute_path_to_project + "\\" + node_name.replace(".", "\\") + ".py"
+    path = absolute_path_to_project + get_slash() + node_name.replace(".", get_slash()) + ".py"
     current_node = node_name
     while path not in project.files and path != ".py":
         new_path = os.path.dirname(path) + ".py"
-        new_node = new_path.replace(absolute_path_to_project + "\\", "").replace("\\", ".").replace(".py", "")
+        new_node = new_path.replace(absolute_path_to_project + get_slash(), "").replace(get_slash(), ".").replace(".py", "")
         if new_path not in project.files:
             function_graph.nodes[new_node] = Node(new_node, NodeType.CLASS, path_of_file_containing_node)
         else:
@@ -84,7 +86,9 @@ def add_parent_nodes(absolute_path_to_project: str, node_name: str, project: Pro
 def add_file_class_and_functions(function_graph: Graph, consistent_output: dict[str, list[str]],
                                  absolute_path_to_project: str, project: Project):
     for node_name in consistent_output.keys():
-        file_path = absolute_path_to_project + "\\" + node_name.replace(".", "\\") + ".py"
+        if absolute_path_to_project + get_slash() + node_name.replace(".", get_slash()) + get_slash() + '__init__.py' in project.files:
+            continue
+        file_path = absolute_path_to_project + get_slash() + node_name.replace(".", get_slash()) + ".py"
         while file_path not in project.files and file_path != ".py":
             file_path = os.path.dirname(file_path) + ".py"
         if file_path == ".py":
@@ -99,12 +103,12 @@ def add_file_class_and_functions(function_graph: Graph, consistent_output: dict[
 def get_parent_package(absolute_path_to_project: str, path: str, project: Project, function_graph: Graph) -> Optional[
     Node]:
     new_path = os.path.dirname(path)
-    new_node = new_path.replace(absolute_path_to_project + "\\", "").replace("\\", ".")
+    new_node = new_path.replace(absolute_path_to_project + get_slash(), "").replace(get_slash(), ".")
     if new_path == "":
         return None
-    if new_path + "\\__init__.py" in project.files:
+    if new_path + get_slash() + "__init__.py" in project.files:
         if new_node not in function_graph.nodes:
-            function_graph.nodes[new_node] = Node(new_node, NodeType.MODULE, new_path + "\\__init__.py")
+            function_graph.nodes[new_node] = Node(new_node, NodeType.MODULE, new_path + get_slash() + "__init__.py")
         if len(function_graph.nodes[new_node].connection) == 0:
             parent_package = get_parent_package(absolute_path_to_project, new_path, project, function_graph)
             if parent_package is not None:
@@ -147,7 +151,7 @@ def create_function_graph(absolute_path_to_project: str) -> Graph:
     
     return function_graph
 
-
+"diagram"
 def create_packages_graph(complete_graph: Graph) -> Graph:
     packages_graph = Graph()
     for node_name, node in complete_graph.nodes.items():
@@ -159,12 +163,21 @@ def create_packages_graph(complete_graph: Graph) -> Graph:
         if node.node_type == NodeType.MODULE:
             stack = [node]
             while len(stack) > 0:
-                current_node = stack.pop()
+                current_node = stack.pop(-1)
                 for connection in current_node.connection:
-                    if connection.connection_type == ConnectionType.USES and not connection.next_node.parent_module.name.contains(node_name):
-                        packages_graph.nodes[node_name].connection.append(connection.next_node.parent_module)
+                    if connection.connection_type == ConnectionType.USES and (connection.next_node.parent_module is None or not connection.next_node.parent_module.name.contains(node_name)):
+                        used_module = connection.next_node.parent_module if connection.next_node.parent_module is not None else Node(connection.next_node.name.split(".")[0], NodeType.MODULE, "<external>")
+                        for connection in packages_graph.nodes[node_name].connection:
+                            if connection.next_node.name == used_module.name:
+                                break
+                        else:
+                            packages_graph.nodes[node_name].connection.append(Connection(used_module, ConnectionType.USES))
                     else:
                         stack.append(connection.next_node)
+    
+    with open("../graph_packages.json", "w+") as f:
+        f.write(packages_graph.model_dump_json(indent=2))
+        # f.write(function_graph.model_dump_json(indent=2))
                         
     return packages_graph
 

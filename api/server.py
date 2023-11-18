@@ -6,7 +6,6 @@ app = Flask(__name__)
 # path to Graph maps
 complete_graphs: dict[str, Graph] = {}
 packages_graphs: dict[str, Graph] = {}
-function_graphs: dict[str, dict[str,Graph]] = {}
 files_classes_graphs: dict[str, dict[str,Graph]] = {}
 
 @app.route("/graph/packages?project=<project>")
@@ -16,7 +15,6 @@ def get_packages_graph(project: str):
     else:
         complete_graphs[project] = create_function_graph(project)
         packages_graphs[project] = create_packages_graph(complete_graphs[project])
-        function_graphs[project] = create_function_graphs(complete_graphs[project])
         files_classes_graphs[project] = create_files_classes_graphs(complete_graphs[project])
         return packages_graphs[project].model_dump_json()
 
