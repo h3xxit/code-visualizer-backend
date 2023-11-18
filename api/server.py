@@ -39,3 +39,6 @@ def get_function_graph(project: str, className: str):
         complete_graphs[project] = create_complete_graph(project)
         packages_graphs[project] = create_packages_graph(complete_graphs[project])
     return create_function_graph(complete_graphs[project], className).model_dump_json() 
+
+if __name__ == '__main__':
+	app.run(host='0.0.0.0', port=8000)
