@@ -1,6 +1,6 @@
 from flask import Flask
 from data_structures.graph import Graph
-from graph_generators.file_graph_generator import create_function_graph, create_packages_graph
+from graph_generators.file_graph_generator import create_complete_graph, create_packages_graph
 
 app = Flask(__name__)
 # path to Graph maps
@@ -13,7 +13,7 @@ def get_packages_graph(project: str):
     if project in packages_graphs:
         return packages_graphs[project].model_dump_json()
     else:
-        complete_graphs[project] = create_function_graph(project)
+        complete_graphs[project] = create_complete_graph(project)
         packages_graphs[project] = create_packages_graph(complete_graphs[project])
         files_classes_graphs[project] = create_files_classes_graphs(complete_graphs[project])
         return packages_graphs[project].model_dump_json()

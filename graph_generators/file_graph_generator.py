@@ -118,7 +118,7 @@ def get_parent_package(absolute_path_to_project: str, path: str, project: Projec
     return get_parent_package(absolute_path_to_project, new_path, project, function_graph)
 
 
-def create_function_graph(absolute_path_to_project: str) -> Graph:
+def create_complete_graph(absolute_path_to_project: str) -> Graph:
     absolute_path_to_project = os.path.normpath(absolute_path_to_project)
     project: Project = read_project_structure(absolute_path_to_project)
     entry_points = project.files.keys()
@@ -181,8 +181,27 @@ def create_packages_graph(complete_graph: Graph) -> Graph:
                         
     return packages_graph
 
-def create_function_graphs(complete_graphs: Graph) -> dict[str,Graph]:
-    pass
+# for file or class
+def create_function_graph(complete_graph: Graph, file_class: str) -> dict[str,Graph]:
+    function_graph = Graph()
+    for node_name, node in complete_graph.nodes.items():
+        if node_name == file_class:
+            function_graph.nodes[node_name] = node
+            stack = [node]
+            while len(stack) > 0:
+                current_node = stack.pop(-1)
+                for connection in current_node.connection:
+                    if connection.connection_type == ConnectionType.USES:
+                        function_graph.nodes[connection.next_node.name] = connection.next_node
+                    elif connection.connection_type == ConnectionType.DEFINES:
+                        stack.append(connection.next_node)
+                        function_graph.nodes[connection.next_node.name] = connection.next_node
+            break
+    with open("../graph_function.json", "w+") as f:
+        f.write(function_graph.model_dump_json(indent=2))
+        # f.write(function_graph.model_dump_json(indent=2))
+                     
+    return function_graph
 
 def create_files_classes_graphs(complete_graph: Graph, package: str) -> dict[str,Graph]:
     # files_classes_graphs : dict[str,Graph] = {}
@@ -199,5 +218,6 @@ def create_files_classes_graphs(complete_graph: Graph, package: str) -> dict[str
 
 if __name__ == '__main__':
     # dump_call_function_json("../test_project", False)
-    complete_graph = create_function_graph("test_project")
-    pkg_graph =  create_packages_graph(complete_graph)
+    complete_graph = create_complete_graph("test_project")
+    # pkg_graph =  create_packages_graph(complete_graph)
+    function_graph = create_function_graph(complete_graph, "ai.AutoGen")
