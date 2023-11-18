@@ -29,7 +29,7 @@ class Connection(BaseModel):
     next_node: Node
     connection_type: ConnectionType
 
-    def __init__(self, next_node: Node, connection_type: str):
+    def __init__(self, next_node: Node, connection_type: ConnectionType):
         super().__init__(next_node=next_node, connection_type=connection_type)
 
     @field_serializer("next_node")
@@ -76,10 +76,10 @@ class Graph(BaseModel):
                     while len(conn_queue) > 0:
                         connection = conn_queue.pop(0)
                         if connection.connection_type == ConnectionType.DEFINES:
-                            if connection.
-                            for function in functions:
-                                if function["name"] == connection.next_node.name:
-                                    connection.next_node.description = function["description"]
+                            #if connection.
+                            #for function in functions:
+                            #    if function["name"] == connection.next_node.name:
+                            #        connection.next_node.description = function["description"]
                                     break
 
 
@@ -88,9 +88,9 @@ class Graph(BaseModel):
                     while len(conn_queue) > 0:
                         connection = conn_queue.pop(0)
                         if connection.connection_type == ConnectionType.DEFINES:
-                            for function in functions:
-                                if function["name"] == connection.next_node.name:
-                                    connection.next_node.description = function["description"]
+                            #for function in functions:
+                            #    if function["name"] == connection.next_node.name:
+                            #        connection.next_node.description = function["description"]
                                     break
 
 

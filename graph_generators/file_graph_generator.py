@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 
-from data_structures.graph import Graph, Node, Connection
+from data_structures.graph import Graph, Node, Connection, NodeType, ConnectionType
 from data_structures.project import Project, File, Module
 from pycg.pycg import CallGraphGenerator
 from pycg.utils.constants import CALL_GRAPH_OP
@@ -14,11 +14,7 @@ def read_project_structure(absolute_path_to_project: str) -> Project:
     for (dirpath, dirnames, filenames) in os.walk(absolute_path_to_project):
         for filename in filenames:
             if filename.endswith(".py"):
-                relative_dirpath = dirpath  # dirpath.replace(absolute_path_to_project, ".")
-                # if filename != "__init__.py":
-
-                # project.files[relative_dirpath] = Module(os.path.basename(relative_dirpath), os.path.dirname(relative_dirpath))
-                # else:
+                relative_dirpath = dirpath
                 project.files[os.path.join(relative_dirpath, filename)] = File(filename,
                                                                                os.path.join(relative_dirpath, filename))
     return project
@@ -76,10 +72,11 @@ def add_parent_nodes(absolute_path_to_project: str, node_name: str, project: Pro
         new_path = os.path.dirname(path) + ".py"
         new_node = new_path.replace(absolute_path_to_project + "\\", "").replace("\\", ".").replace(".py", "")
         if new_path not in project.files:
-            function_graph.nodes[new_node] = Node(new_node, "class", path_of_file_containing_node)
+            function_graph.nodes[new_node] = Node(new_node, NodeType.CLASS, path_of_file_containing_node)
         else:
-            function_graph.nodes[new_node] = Node(new_node, "file", path_of_file_containing_node)
-        function_graph.nodes[new_node].connection.append(Connection(function_graph.nodes[current_node], "define"))
+            function_graph.nodes[new_node] = Node(new_node, NodeType.FILE, path_of_file_containing_node)
+        function_graph.nodes[new_node].connection.append(
+            Connection(function_graph.nodes[current_node], ConnectionType.DEFINES))
         path = new_path
         current_node = new_node
 
@@ -93,24 +90,25 @@ def add_file_class_and_functions(function_graph: Graph, consistent_output: dict[
         if file_path == ".py":
             file_path = ""
         if node_name not in function_graph.nodes:
-            function_graph.nodes[node_name] = Node(node_name, "function", file_path)
+            function_graph.nodes[node_name] = Node(node_name, NodeType.FUNCTION, file_path)
 
         if len(function_graph.nodes[node_name].connection) == 0:
             add_parent_nodes(absolute_path_to_project, node_name, project, function_graph, file_path)
 
 
-def get_parent_package(absolute_path_to_project: str, path: str, project: Project, function_graph: Graph) -> Optional[Node]:
+def get_parent_package(absolute_path_to_project: str, path: str, project: Project, function_graph: Graph) -> Optional[
+    Node]:
     new_path = os.path.dirname(path)
     new_node = new_path.replace(absolute_path_to_project + "\\", "").replace("\\", ".")
     if new_path == "":
         return None
     if new_path + "\\__init__.py" in project.files:
         if new_node not in function_graph.nodes:
-            function_graph.nodes[new_node] = Node(new_node, "package", new_path + "\\__init__.py")
+            function_graph.nodes[new_node] = Node(new_node, NodeType.MODULE, new_path + "\\__init__.py")
         if len(function_graph.nodes[new_node].connection) == 0:
             parent_package = get_parent_package(absolute_path_to_project, new_path, project, function_graph)
             if parent_package is not None:
-                parent_package.connection.append(Connection(function_graph.nodes[new_node], "contains"))
+                parent_package.connection.append(Connection(function_graph.nodes[new_node], ConnectionType.CONTAINS))
         return function_graph.nodes[new_node]
     return get_parent_package(absolute_path_to_project, new_path, project, function_graph)
 
@@ -130,15 +128,16 @@ def create_function_graph(absolute_path_to_project: str):
     function_graph = Graph()
     add_file_class_and_functions(function_graph, consistent_output, absolute_path_to_project, project)
 
-    file_nodes = list(node for node in function_graph.nodes.values() if node.node_type == "file")
+    file_nodes = list(node for node in function_graph.nodes.values() if node.node_type == NodeType.FILE)
     for node in file_nodes:
         parent_package = get_parent_package(absolute_path_to_project, node.path, project, function_graph)
         if parent_package is not None:
-            parent_package.connection.append(Connection(node, "contains"))
+            parent_package.connection.append(Connection(node, ConnectionType.CONTAINS))
 
     for node_name, dependencies in consistent_output.items():
         for dependency in dependencies:
-            function_graph.nodes[node_name].connection.append(Connection(function_graph.nodes[dependency], "uses"))
+            function_graph.nodes[node_name].connection.append(
+                Connection(function_graph.nodes[dependency], ConnectionType.USES))
 
     with open("../graph.json", "w+") as f:
         f.write(filter_functions(function_graph, "diagram").model_dump_json(indent=2))
