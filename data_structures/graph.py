@@ -1,19 +1,30 @@
 from __future__ import annotations
+from pydantic import BaseModel, field_serializer
 
 
-class Connection:
-    def __init__(self, nextNode: Node, connectionType: str):
-        self.nextNode: Node = nextNode
-        self.connectionType: str = connectionType
+class Connection(BaseModel):
+    next_node: Node
+    connection_type: str
+
+    def __init__(self, next_node: Node, connection_type: str):
+        super().__init__(next_node=next_node, connection_type=connection_type)
+
+    @field_serializer("next_node")
+    def serialize_next_node(self, next_node: Node):
+        return next_node.name
 
 
-class Node:
+class Node(BaseModel):
+    name: str
+    description: str
+    connection: list[Connection]
+
     def __init__(self, name):
-        self.name = name
-        self.description = ""
-        self.connection: list[Connection] = []
+        super().__init__(name=name, description="", connection=[])
 
 
-class Graph:
+class Graph(BaseModel):
+    nodes: dict[str, Node]
+
     def __init__(self):
-        self.nodes: list[Node] = []
+        super().__init__(nodes=dict())
