@@ -11,7 +11,7 @@ init-venv:
 	pre-commit install && \
 	pre-commit autoupdate
 
-# star venv 
+# start venv 
 .ONESHELL:
-star-venv:
+start-venv:
 	source .venv/bin/activate
