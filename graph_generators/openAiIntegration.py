@@ -14,7 +14,8 @@ def annotate_file(file_content: str) -> str:
     file_content = f"Code: \n{file_content}\n"
     system_prompt = {
         "role": "system",
-        "content": "You will recieve the code of a python file as input. Reply in 2 short sentences with a description of everything the file does. Your reply MUST NOT have more than 300 characters.",
+        "content": "You will recieve the code of a python file as input. Reply in 2 short sentences with a description of everything the file does. Your reply MUST NOT have more than 300 characters. " +
+                   "This is an example of a class description: 'The file defines classes for creating conversational agents and managing their interactions. The `AutoGenAgentNode` class is an abstract base class for creating agents with specific configurations. The `AutoGenAssistantAgentNode` and `AutoGenUserProxyNode` classes inherit from `AutoGenAgentNode` and implement the `createAgent` method to create specific types of agents. The `AutoGenTwoAgentConversation` and `AutoGenGroupChat` classes manage conversations between two agents and a group of agents respectively.'",
     }
     print("Made a request to openAI")
     response = openai.OpenAI().chat.completions.create(
@@ -31,7 +32,8 @@ def annotate_class(file_content: str, class_name: str) -> str:
     file_content = f"Code: \n{file_content}\nClass:\n{class_name}"
     system_prompt = {
         "role": "system",
-        "content": "You will recieve the code of a python file as input, and a class name. Reply in 2 short sentences with a description of what the class does. Your reply MUST NOT have more than 300 characters.",
+        "content": "You will recieve the code of a python file as input, and a class name. Reply in 2 short sentences with a description of what the class does. Your reply MUST NOT have more than 300 characters." +
+                   "This is an example of a class description: 'The OpenAiChatHistoryNode class in Python is a type of StarterNode that manages the history of a chat conversation. It has a run method that returns a dictionary containing the chat history. The class is used to append new chat items to the existing history and return the updated history.'",
     }
     print("Made a request to openAI")
     response = openai.OpenAI().chat.completions.create(
