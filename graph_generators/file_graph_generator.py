@@ -251,8 +251,7 @@ def create_function_graph(complete_graph: Graph, file_class: str) -> Graph:
 
     annotator = Annotator(function_graph)
     for node_name in function_graph.nodes:
-        if function_graph.nodes[node_name].node_type == NodeType.FUNCTION:
-            annotator.get_function_annotation(function_graph.nodes[node_name])
+        annotator.annotate_node(function_graph.nodes[node_name])
     with open("../graph_function.json", "w+") as f:
         f.write(function_graph.model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))
@@ -289,6 +288,9 @@ def create_files_classes_graphs(complete_graph: Graph, package: str) -> Graph:
                     else:
                         stack.append(connection.next_node)
 
+    annotator = Annotator(file_classes_graph)
+    for node_name in file_classes_graph.nodes:
+        annotator.annotate_node(file_classes_graph.nodes[node_name])
     with open("../graph_function.json", "w+") as f:
         f.write(file_classes_graph.model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))

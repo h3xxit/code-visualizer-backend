@@ -34,7 +34,7 @@ def get_files_and_classes_graph(project: str, package: str):
     return create_files_classes_graphs(complete_graphs[project], package).model_dump_json()
     
 
-@app.route("/graph/packages/<project>/<className>")
+@app.route("/graph/function/<project>/<className>")
 def get_function_graph(project: str, className: str):
     create_graph_if_empty(project)
     return create_function_graph(complete_graphs[project], className).model_dump_json() 

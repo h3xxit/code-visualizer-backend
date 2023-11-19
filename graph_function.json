@@ -1,142 +1,196 @@
 {
   "nodes": {
-    "diagram.TextNodes": {
-      "name": "diagram.TextNodes",
+    "ai.AutoGen": {
+      "name": "ai.AutoGen",
       "node_type": "FILE",
-      "description": "",
+      "description": "The Python file defines classes for creating conversational agents and managing their interactions. The `AutoGenAgentNode` class is an abstract base class for creating agents with specific configurations. The `AutoGenAssistantAgentNode` and `AutoGenUserProxyNode` classes inherit from `AutoGenAgentNode` and implement the `createAgent` method to create specific types of agents. The `AutoGenTwoAgentConversation` and `AutoGenGroupChat` classes manage conversations between two agents and a group of agents respectively.",
       "connection": [
         {
-          "next_node": "diagram.TextNodes.StartsWithNode",
+          "next_node": "ai.AutoGen.AutoGenGroupChat",
           "connection_type": "DEFINES"
-        }
-      ],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
-    },
-    "diagram.TextNodes.StartsWithNode": {
-      "name": "diagram.TextNodes.StartsWithNode",
-      "node_type": "CLASS",
-      "description": "",
-      "connection": [
+        },
         {
-          "next_node": "diagram.TextNodes.StartsWithNode.elseBranch",
-          "connection_type": "DEFINES"
-        }
-      ],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
-    },
-    "diagram.TextNodes.StartsWithNode.elseBranch": {
-      "name": "diagram.TextNodes.StartsWithNode.elseBranch",
-      "node_type": "FUNCTION",
-      "description": "Returns a dictionary with the value of 'passThrough' input in the 'else' key.",
-      "connection": [],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
-    },
-    "diagram.TextNodes.TextNode.__init__": {
-      "name": "diagram.TextNodes.TextNode.__init__",
-      "node_type": "FUNCTION",
-      "description": "Initializes a TextNode object.",
-      "connection": [
+          "next_node": "diagram.Node",
+          "connection_type": "USES"
+        },
         {
-          "next_node": "<builtin>.super",
+          "next_node": "autogen",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "<builtin>",
           "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
+      "path": "..\\test_project\\ai\\AutoGen.py"
     },
-    "diagram.TextNodes.TextNode": {
-      "name": "diagram.TextNodes.TextNode",
+    "ai.AutoGen.AutoGenAgentNode": {
+      "name": "ai.AutoGen.AutoGenAgentNode",
       "node_type": "CLASS",
-      "description": "",
+      "description": "The `AutoGenAgentNode` class in Python is an abstract base class that represents a node in a conversational agent system. It has attributes like name, model, temperature, timeout, and canRunCode, and methods to run the agent and create it with a given configuration. The class is designed to be extended by other classes that implement the `createAgent` method to create specific types of conversational agents.",
       "connection": [
         {
-          "next_node": "diagram.TextNodes.TextNode.run",
+          "next_node": "ai.AutoGen.AutoGenAgentNode.createAgent",
           "connection_type": "DEFINES"
-        }
-      ],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
-    },
-    "diagram.TextNodes.TextNode.run": {
-      "name": "diagram.TextNodes.TextNode.run",
-      "node_type": "FUNCTION",
-      "description": "Runs the TextNode and returns a dictionary with the 'text' key and its value.",
-      "connection": [],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
-    },
-    "diagram.TextNodes.NumberNode.__init__": {
-      "name": "diagram.TextNodes.NumberNode.__init__",
-      "node_type": "FUNCTION",
-      "description": "Initializes a NumberNode object.",
-      "connection": [
+        },
         {
-          "next_node": "<builtin>.super",
+          "next_node": "abc",
           "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
+      "path": "..\\test_project\\ai\\AutoGen.py"
     },
-    "diagram.TextNodes.NumberNode": {
-      "name": "diagram.TextNodes.NumberNode",
+    "ai.AutoGen.AutoGenAssistantAgentNode": {
+      "name": "ai.AutoGen.AutoGenAssistantAgentNode",
       "node_type": "CLASS",
-      "description": "",
+      "description": "The `AutoGenAssistantAgentNode` class in Python is a subclass of `AutoGenAgentNode` that represents an assistant agent in a conversational AI system. It overrides the `createAgent` method from the parent class to create an instance of `autogen.AssistantAgent` with specific configurations. This class is used to create an assistant agent that can participate in a conversation, execute code, and respond to system messages.",
       "connection": [
         {
-          "next_node": "diagram.TextNodes.NumberNode.run",
+          "next_node": "ai.AutoGen.AutoGenAssistantAgentNode.createAgent",
           "connection_type": "DEFINES"
-        }
-      ],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
-    },
-    "diagram.TextNodes.NumberNode.run": {
-      "name": "diagram.TextNodes.NumberNode.run",
-      "node_type": "FUNCTION",
-      "description": "Runs the NumberNode and returns a dictionary with the 'number' key and its value.",
-      "connection": [],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
-    },
-    "diagram.TextNodes.ConcatenateNode.__init__": {
-      "name": "diagram.TextNodes.ConcatenateNode.__init__",
-      "node_type": "FUNCTION",
-      "description": "Initializes a ConcatenateNode object.",
-      "connection": [
+        },
         {
-          "next_node": "<builtin>.super",
+          "next_node": "autogen",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram.BaseNodes",
           "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
+      "path": "..\\test_project\\ai\\AutoGen.py"
     },
-    "diagram.TextNodes.ConcatenateNode": {
-      "name": "diagram.TextNodes.ConcatenateNode",
+    "ai.AutoGen.AutoGenUserProxyNode": {
+      "name": "ai.AutoGen.AutoGenUserProxyNode",
       "node_type": "CLASS",
-      "description": "",
+      "description": "The `AutoGenUserProxyNode` class in Python is a subclass of `AutoGenAgentNode` that represents a user proxy agent in a conversational AI system. It overrides the `createAgent` method to create a `UserProxyAgent` with specific configurations such as the maximum number of consecutive auto replies and the mode of human input. The class also checks for a termination message to end the conversation.",
       "connection": [
         {
-          "next_node": "diagram.TextNodes.ConcatenateNode.run",
+          "next_node": "ai.AutoGen.AutoGenUserProxyNode.createAgent",
           "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "autogen",
+          "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
+      "path": "..\\test_project\\ai\\AutoGen.py"
     },
-    "diagram.TextNodes.ConcatenateNode.run": {
-      "name": "diagram.TextNodes.ConcatenateNode.run",
-      "node_type": "FUNCTION",
-      "description": "Runs the ConcatenateNode and returns a dictionary with the 'full text' key and its value.",
-      "connection": [],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
+    "ai.AutoGen.AutoGenTwoAgentConversation": {
+      "name": "ai.AutoGen.AutoGenTwoAgentConversation",
+      "node_type": "CLASS",
+      "description": "The `AutoGenTwoAgentConversation` class in Python is used to facilitate a conversation between two agents. It initiates a chat between a user proxy and an assistant, and processes the conversation history to extract the final answer. If the last message in the conversation is \"TERMINATE\", it takes the second last message as the answer, otherwise, it takes the last message as the answer.",
+      "connection": [
+        {
+          "next_node": "ai.AutoGen.AutoGenTwoAgentConversation.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\AutoGen.py"
     },
-    "diagram.TextNodes.StartsWithNode.condition": {
-      "name": "diagram.TextNodes.StartsWithNode.condition",
-      "node_type": "FUNCTION",
-      "description": "Checks if the value of 'text' input starts with the value of 'prefix' input.",
-      "connection": [],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
+    "ai.AutoGen.AutoGenGroupChat": {
+      "name": "ai.AutoGen.AutoGenGroupChat",
+      "node_type": "CLASS",
+      "description": "The `AutoGenGroupChat` class in Python is used to simulate a group chat scenario. It initializes with various parameters like temperature, model, timeout, and maximum rounds for the group chat. The `run` method initiates the chat with a question and manages the conversation, returning the chat history and the answer to the question.",
+      "connection": [
+        {
+          "next_node": "ai.AutoGen.AutoGenGroupChat.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "autogen",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\AutoGen.py"
     },
-    "diagram.TextNodes.StartsWithNode.thenBranch": {
-      "name": "diagram.TextNodes.StartsWithNode.thenBranch",
-      "node_type": "FUNCTION",
-      "description": "Returns a dictionary with the value of 'passThrough' input in the 'then' key.",
-      "connection": [],
-      "path": "..\\test_project\\diagram\\TextNodes.py"
+    "ai.openai": {
+      "name": "ai.openai",
+      "node_type": "FILE",
+      "description": "The Python file defines classes and functions for interacting with OpenAI's GPT-3 model in a chat-like manner. The `OpenAiChatHistoryItem` class represents a single message in the chat history, with a role (system, user, or assistant) and content. The `runSimpleChat` function takes a history of chat items, a question, and optional parameters for the GPT model and temperature, and returns the updated history and the model's response. The `ChatGptNode` and `OpenAiChatHistoryNode` classes are used to integrate this functionality into a larger system, likely a chatbot or dialogue system.",
+      "connection": [
+        {
+          "next_node": "ai.openai.OpenAiChatHistoryNode",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "ai.openai",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\openai.py"
+    },
+    "ai.openai.OpenAiChatHistoryItem": {
+      "name": "ai.openai.OpenAiChatHistoryItem",
+      "node_type": "CLASS",
+      "description": "The class \"OpenAiChatHistoryItem\" is a subclass of Python's built-in dictionary. It is used to store a chat history item in a conversation with OpenAI's GPT-3 model. Each instance of this class represents a single message in the chat, with the \"role\" key indicating the sender (system, user, or assistant) and the \"content\" key storing the message text.",
+      "connection": [
+        {
+          "next_node": "ai",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\openai.py"
+    },
+    "ai.openai.ChatGptNode": {
+      "name": "ai.openai.ChatGptNode",
+      "node_type": "CLASS",
+      "description": "The `ChatGptNode` class in the provided Python code is a subclass of `FunctionNode`. It is used to run a simple chat with the OpenAI GPT model. The class is initialized with data and uses the `runSimpleChat` function to interact with the GPT model.",
+      "connection": [
+        {
+          "next_node": "ai.openai.ChatGptNode.__init__",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\openai.py"
+    },
+    "ai.openai.OpenAiChatHistoryNode": {
+      "name": "ai.openai.OpenAiChatHistoryNode",
+      "node_type": "CLASS",
+      "description": "The OpenAiChatHistoryNode class in Python is a type of StarterNode that manages the history of a chat conversation. It has a run method that returns a dictionary containing the chat history. The class is used to append new chat items to the existing history and return the updated history.",
+      "connection": [
+        {
+          "next_node": "ai.openai.OpenAiChatHistoryNode.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "ai",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\openai.py"
     }
   },
   "path_to_project": "..\\test_project"

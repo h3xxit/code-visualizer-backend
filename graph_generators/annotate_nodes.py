@@ -2,6 +2,7 @@ import os
 from functools import reduce
 
 from data_structures.graph import NodeType, ConnectionType, Graph, Node
+from graph_generators.openAiIntegration import annotate_functions_in_file, annotate_file, annotate_class
 import dotenv
 
 
@@ -13,6 +14,50 @@ class Annotator:
     def __init__(self, graph: Graph):
         self.graph = graph
         self.in_progress: dict[str, bool] = dict()
+
+
+    def annotate_node(self, node: Node) -> str:
+        if node.node_type == NodeType.FILE:
+            return self.get_file_annotation(node)
+        elif node.node_type == NodeType.CLASS:
+            return self.get_class_annotation(node)
+        elif node.node_type == NodeType.FUNCTION:
+            return self.get_function_annotation(node)
+
+    def get_file_annotation(self, node: Node) -> str:
+        if node.node_type != NodeType.FILE:
+            return ""
+
+        # check cache
+        if node.description != "":
+            return node.description
+
+        file_content = ""
+        with open(node.path, "r") as f:
+            file_content = f.read()
+        if file_content == "":
+            print(f"ERROR: could not read file at {node.path}")
+            return ""
+        response = annotate_file(file_content)
+        node.description = response
+
+    def get_class_annotation(self, node: Node) -> str:
+        if node.node_type != NodeType.CLASS:
+            return ""
+
+        # check cache
+        if node.description != "":
+            return node.description
+
+        file_content = ""
+        with open(node.path, "r") as f:
+            file_content = f.read()
+        if file_content == "":
+            print(f"ERROR: could not read file at {node.path}")
+            return ""
+        response = annotate_class(file_content, node.name)
+        node.description = response
+
 
     def get_function_annotation(self, node: Node) -> str:
         if node.node_type != NodeType.FUNCTION:
@@ -57,7 +102,7 @@ class Annotator:
 
         # generate description with openai
         all_descriptions = reduce(lambda x, y: x + "\n\n" + y, descriptions_of_functions_used, "")
-        response = annotate_file(file_content, all_descriptions)
+        response = annotate_functions_in_file(file_content, all_descriptions)
         file_of_node = node.path.replace(self.graph.path_to_project + get_slash(), "").replace(get_slash(), ".").replace(".py", "")
         for function_description in response["function_descriptions"]:
             new_node_name = file_of_node + "." + function_description["name"]
