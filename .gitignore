@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 /test_project/
 graph.json
+graph_files_classes.json
+graph_function.json
