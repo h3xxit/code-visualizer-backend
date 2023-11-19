@@ -33,7 +33,7 @@ def get_files_and_classes_graph(project: str, package: str):
     return create_files_classes_graphs(complete_graphs[project], package).model_dump_json()
     
 
-@app.route("/graph/functions?project=<project>&className=<className>")
+@app.route("/graph/packages?project=<project>&className=<className>")
 def get_function_graph(project: str, className: str):
     if project not in complete_graphs: 
         complete_graphs[project] = create_complete_graph(project)
