@@ -8,8 +8,43 @@ ask_graph_prompt = "You are a chatbot that a user can interact with. the chat is
     "The repository is presented as a graph of nodes where a node can either be a module, a file, a class or a function. You will recieve the message of the user and the currently displayed graph as json input. " + \
     "Answer the message of theuser according to currently displayed graph while taking previously asked questions and graphs into account. If you refer to a node in your answer, use the name of the node and wrap it " + \
     "in double curly brackets, e.g. {{node_name}}." 
-    
-def annotate_file(file_content: str, function_call_desc: str) -> dict[str, list]:
+
+
+def annotate_file(file_content: str) -> str:
+    file_content = f"Code: \n{file_content}\n"
+    system_prompt = {
+        "role": "system",
+        "content": "You will recieve the code of a python file as input. Reply in 2 short sentences with a description of everything the file does. Your reply MUST NOT have more than 300 characters.",
+    }
+    print("Made a request to openAI")
+    response = openai.OpenAI().chat.completions.create(
+        model="gpt-3.5-turbo",#"gpt-4-1106-preview",
+        messages=[system_prompt, {"role": "user", "content": file_content}],
+        temperature=0.,
+    )
+    print("Finished openAI request")
+
+    return response.choices[0].message.content
+
+
+def annotate_class(file_content: str, class_name: str) -> str:
+    file_content = f"Code: \n{file_content}\nClass:\n{class_name}"
+    system_prompt = {
+        "role": "system",
+        "content": "You will recieve the code of a python file as input, and a class name. Reply in 2 short sentences with a description of what the class does. Your reply MUST NOT have more than 300 characters.",
+    }
+    print("Made a request to openAI")
+    response = openai.OpenAI().chat.completions.create(
+        model="gpt-3.5-turbo",#"gpt-4-1106-preview",
+        messages=[system_prompt, {"role": "user", "content": file_content}],
+        temperature=0.,
+    )
+    print("Finished openAI request")
+
+    return response.choices[0].message.content
+
+
+def annotate_functions_in_file(file_content: str, function_call_desc: str) -> dict[str, list]:
     file_content = f"Code: \n{file_content}\nRelated functions:\n{function_call_desc}"
     system_prompt = {
         "role": "system",
