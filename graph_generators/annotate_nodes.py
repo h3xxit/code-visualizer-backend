@@ -2,7 +2,6 @@ import os
 from functools import reduce
 
 from data_structures.graph import NodeType, ConnectionType, Graph, Node
-from graph_generators.openAiIntegration import annotate_file
 import dotenv
 
 
