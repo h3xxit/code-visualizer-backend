@@ -12,7 +12,7 @@ services:
     build:
       context: .
     ports:
-      - "5000:8000" # Map host port 5000 to container port 8000
+      - "5001:8000" # Map host port 5000 to container port 8000
     networks:
       - mynetwork
     volumes:
