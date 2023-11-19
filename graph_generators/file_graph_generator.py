@@ -148,7 +148,7 @@ def get_parent_package(absolute_path_to_project: str, path: str, project: Projec
     return get_parent_package(absolute_path_to_project, new_path, project, function_graph)
 
 
-def create_complete_graph(absolute_path_to_project: str) -> Graph:
+def create_complete_graph(absolute_path_to_project: str, should_annotate: bool = True) -> Graph:
     absolute_path_to_project = os.path.normpath(absolute_path_to_project)
     project: Project = read_project_structure(absolute_path_to_project)
     entry_points = project.files.keys()
@@ -184,14 +184,22 @@ def create_complete_graph(absolute_path_to_project: str) -> Graph:
             function_graph.nodes[node_name].connection.append(
                 Connection(function_graph.nodes[dependency], ConnectionType.USES))
 
-    """for file_name, nodes in additional_info.items():
-        for node_name, node_info in nodes:
-            if function_graph.nodes[node_name].node_type == NodeType.CLASS and node_info:
-                pass"""
+    for file_name, nodes in additional_info.items():
+        for node_name, node_info in nodes.items():
+            if node_name in function_graph.nodes \
+                    and function_graph.nodes[node_name].node_type == NodeType.CLASS \
+                    and "superClasses" in node_info["metadata"]:
+                super_classes: list[str] = node_info["metadata"]["superClasses"]
+                for super_class in super_classes:
+                    super_class_name = os.path.normpath(super_class)
+                    super_class_name = super_class_name[super_class_name.rfind(get_slash())+1:]
+                    if super_class_name in function_graph.nodes:
+                        function_graph.nodes[super_class_name].connection.append(Connection(function_graph.nodes[node_name], ConnectionType.INHERITS_FROM))
 
-    annotator = Annotator(function_graph)
-    for node_name in function_graph.nodes:
-        annotator.annotate_node(function_graph.nodes[node_name])
+    if should_annotate:
+        annotator = Annotator(function_graph)
+        for node_name in function_graph.nodes:
+            annotator.annotate_node(function_graph.nodes[node_name])
 
     with open("../graph.json", "w+") as f:
         f.write(filter_functions(function_graph, "diagram").model_dump_json(indent=2))
@@ -310,7 +318,7 @@ def create_files_classes_graphs(complete_graph: Graph, package: str) -> Graph:
 if __name__ == '__main__':
     dotenv.load_dotenv()
     #dump_call_function_json("../test_project", True)
-    test_complete_graph = create_complete_graph("../test_project")
+    test_complete_graph = create_complete_graph("../test_project", False)
     # pkg_graph =  create_packages_graph(complete_graph)
     # test_graph = create_function_graph(test_complete_graph, "diagram.TextNodes")
     test_graph = create_files_classes_graphs(test_complete_graph, "ai")
