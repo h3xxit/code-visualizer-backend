@@ -15,24 +15,24 @@ def create_graph_if_empty(project: str):
         complete_graphs[project] = create_complete_graph(project)
         packages_graphs[project] = create_packages_graph(complete_graphs[project])
 
-@app.route("/graph/packages?project=<project>")
+@app.route("/graph/packages/<project>")
 def get_packages_graph(project: str):
     create_graph_if_empty(project)
     return packages_graphs[project].model_dump_json()
 
-@app.route("/graph/complete?project=<project>")
+@app.route("/graph/complete/<project>")
 def get_complete_graph(project: str):
     create_graph_if_empty(project)
     return complete_graphs[project].model_dump_json()
 
 
-@app.route("/graph/file-and-classes?project=<project>&package=<package>")
+@app.route("/graph/file-and-classes/<project>/<package>")
 def get_files_and_classes_graph(project: str, package: str):
     create_graph_if_empty(project)
     return create_files_classes_graphs(complete_graphs[project], package).model_dump_json()
     
 
-@app.route("/graph/packages?project=<project>&className=<className>")
+@app.route("/graph/packages/<project>/<className>")
 def get_function_graph(project: str, className: str):
     create_graph_if_empty(project)
     return create_function_graph(complete_graphs[project], className).model_dump_json() 
@@ -66,7 +66,7 @@ def ask_package(project: str, package: str):
             # Process the list of messages as needed (you can customize this part)
 
             # Return a success response
-            return ai_quiry_with_graph(packages_graphs[project].model_dump_json(), messages)
+            return ai_quiry_with_graph(packages_graphs[package].model_dump_json(), messages)
         else:
             # If 'data' key is missing or doesn't contain a list, return an error response
             return jsonify({'error': 'Invalid data format'}), 400
