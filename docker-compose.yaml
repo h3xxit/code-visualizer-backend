@@ -16,7 +16,7 @@ services:
     networks:
       - mynetwork
     volumes:
-      - ./test_projects:/app/test_repository
+      - ./test_project:/app/test_project
 
 networks:
   mynetwork:
