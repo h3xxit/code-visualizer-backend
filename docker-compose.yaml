@@ -1,13 +1,12 @@
 version: '3'
 
 services:
-  # react-app:
-  #   build:
-  #     context: ./path/to/react/app
-  #   ports:
-  #     - "3000:80" # Map host port 3000 to container port 80
-  #   networks:
-  #     - mynetwork
+  react-app:
+    image: code_visualizer_frontend_image
+    ports:
+      - "9000:80" # Map host port 3000 to container port 80
+    networks:
+      - mynetwork
 
   flask-app:
     build:
@@ -16,6 +15,8 @@ services:
       - "5000:8000" # Map host port 5000 to container port 8000
     networks:
       - mynetwork
+    volumes:
+      - ./test_projects:/app/test_repository
 
 networks:
   mynetwork:

@@ -10,14 +10,14 @@ complete_graphs: dict[str, Graph] = {}
 packages_graphs: dict[str, Graph] = {}
 files_classes_graphs: dict[str, dict[str,Graph]] = {}
 
-@app.route("/graph/packages?project=<project>")
+@app.route("/graph/packages/<project>")
 def get_packages_graph(project: str):
     if project not in packages_graphs:
         complete_graphs[project] = create_complete_graph(project)
         packages_graphs[project] = create_packages_graph(complete_graphs[project])
     return packages_graphs[project].model_dump_json()
 
-@app.route("/graph/complete?project=<project>")
+@app.route("/graph/complete/<project>")
 def get_complete_graph(project: str):
     if project not in complete_graphs:
         complete_graphs[project] = create_complete_graph(project)
@@ -25,7 +25,7 @@ def get_complete_graph(project: str):
     return complete_graphs[project].model_dump_json()
 
 
-@app.route("/graph/file-and-classes?project=<project>&package=<package>")
+@app.route("/graph/file-and-classes/<project>/<package>")
 def get_files_and_classes_graph(project: str, package: str):
     if project not in complete_graphs: 
         complete_graphs[project] = create_complete_graph(project)
@@ -33,7 +33,7 @@ def get_files_and_classes_graph(project: str, package: str):
     return create_files_classes_graphs(complete_graphs[project], package).model_dump_json()
     
 
-@app.route("/graph/packages?project=<project>&className=<className>")
+@app.route("/graph/packages/<project>/<className>")
 def get_function_graph(project: str, className: str):
     if project not in complete_graphs: 
         complete_graphs[project] = create_complete_graph(project)
