@@ -86,7 +86,7 @@ def annotate_functions_in_file(file_content: str, function_call_desc: str) -> di
 
     print("Made a request to openAI")
     response = openai.OpenAI().chat.completions.create(
-        model="gpt-3.5-turbo",#"gpt-4-1106-preview",
+        model="gpt-4-1106-preview",
         messages=[system_prompt, {"role": "user", "content": file_content}],
         tools=tools, temperature=0.,
     )

@@ -184,6 +184,15 @@ def create_complete_graph(absolute_path_to_project: str) -> Graph:
             function_graph.nodes[node_name].connection.append(
                 Connection(function_graph.nodes[dependency], ConnectionType.USES))
 
+    """for file_name, nodes in additional_info.items():
+        for node_name, node_info in nodes:
+            if function_graph.nodes[node_name].node_type == NodeType.CLASS and node_info:
+                pass"""
+
+    annotator = Annotator(function_graph)
+    for node_name in function_graph.nodes:
+        annotator.annotate_node(function_graph.nodes[node_name])
+
     with open("../graph.json", "w+") as f:
         f.write(filter_functions(function_graph, "diagram").model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))
@@ -249,9 +258,9 @@ def create_function_graph(complete_graph: Graph, file_class: str) -> Graph:
         if node_name.startswith(file_class_node.name) and node_name not in function_graph:
             function_graph.nodes[node_name] = node
 
-    annotator = Annotator(function_graph)
+    """annotator = Annotator(function_graph)
     for node_name in function_graph.nodes:
-        annotator.annotate_node(function_graph.nodes[node_name])
+        annotator.annotate_node(function_graph.nodes[node_name])"""
     with open("../graph_function.json", "w+") as f:
         f.write(function_graph.model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))
@@ -288,9 +297,9 @@ def create_files_classes_graphs(complete_graph: Graph, package: str) -> Graph:
                     else:
                         stack.append(connection.next_node)
 
-    annotator = Annotator(file_classes_graph)
+    """annotator = Annotator(file_classes_graph)
     for node_name in file_classes_graph.nodes:
-        annotator.annotate_node(file_classes_graph.nodes[node_name])
+        annotator.annotate_node(file_classes_graph.nodes[node_name])"""
     with open("../graph_function.json", "w+") as f:
         f.write(file_classes_graph.model_dump_json(indent=2))
         # f.write(function_graph.model_dump_json(indent=2))
@@ -300,7 +309,7 @@ def create_files_classes_graphs(complete_graph: Graph, package: str) -> Graph:
 
 if __name__ == '__main__':
     dotenv.load_dotenv()
-    # dump_call_function_json("../test_project", False)
+    #dump_call_function_json("../test_project", True)
     test_complete_graph = create_complete_graph("../test_project")
     # pkg_graph =  create_packages_graph(complete_graph)
     # test_graph = create_function_graph(test_complete_graph, "diagram.TextNodes")

@@ -32,6 +32,11 @@ class Annotator:
         if node.description != "":
             return node.description
 
+        # external libraries
+        if node.path == "":
+            node.description = "External file"
+            return node.description
+
         file_content = ""
         with open(node.path, "r") as f:
             file_content = f.read()
@@ -47,6 +52,11 @@ class Annotator:
 
         # check cache
         if node.description != "":
+            return node.description
+
+        # external libraries
+        if node.path == "":
+            node.description = "External class"
             return node.description
 
         file_content = ""
@@ -69,7 +79,7 @@ class Annotator:
 
         # external libraries
         if node.path == "":
-            node.description = "External node"
+            node.description = "External function"
             return node.description
 
         # check for circular dependency

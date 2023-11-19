@@ -3,18 +3,18 @@
     "ai.AutoGen": {
       "name": "ai.AutoGen",
       "node_type": "FILE",
-      "description": "The Python file defines classes for creating conversational agents and managing their interactions. The `AutoGenAgentNode` class is an abstract base class for creating agents with specific configurations. The `AutoGenAssistantAgentNode` and `AutoGenUserProxyNode` classes inherit from `AutoGenAgentNode` and implement the `createAgent` method to create specific types of agents. The `AutoGenTwoAgentConversation` and `AutoGenGroupChat` classes manage conversations between two agents and a group of agents respectively.",
+      "description": "The file defines classes for creating conversational agents and managing their interactions. The `AutoGenAgentNode` class is an abstract base class for creating agents with specific configurations. The `AutoGenAssistantAgentNode` and `AutoGenUserProxyNode` classes inherit from `AutoGenAgentNode` and implement the `createAgent` method to create specific types of agents. The `AutoGenTwoAgentConversation` and `AutoGenGroupChat` classes manage conversations between two agents and a group of agents respectively.",
       "connection": [
         {
           "next_node": "ai.AutoGen.AutoGenGroupChat",
           "connection_type": "DEFINES"
         },
         {
-          "next_node": "diagram.Node",
+          "next_node": "autogen",
           "connection_type": "USES"
         },
         {
-          "next_node": "autogen",
+          "next_node": "diagram.Node",
           "connection_type": "USES"
         },
         {
@@ -27,7 +27,7 @@
     "ai.AutoGen.AutoGenAgentNode": {
       "name": "ai.AutoGen.AutoGenAgentNode",
       "node_type": "CLASS",
-      "description": "The `AutoGenAgentNode` class in Python is an abstract base class that represents a node in a conversational agent system. It has attributes like name, model, temperature, timeout, and canRunCode, and methods to run the agent and create it with a given configuration. The class is designed to be extended by other classes that implement the `createAgent` method to create specific types of conversational agents.",
+      "description": "The AutoGenAgentNode class is a subclass of StarterNode that represents an agent in an AI conversation. It has a run method that creates and returns an agent based on the provided configuration. The class is used as a base class for creating specific types of agents, such as AutoGenAssistantAgentNode and AutoGenUserProxyNode.",
       "connection": [
         {
           "next_node": "ai.AutoGen.AutoGenAgentNode.createAgent",
@@ -43,7 +43,7 @@
     "ai.AutoGen.AutoGenAssistantAgentNode": {
       "name": "ai.AutoGen.AutoGenAssistantAgentNode",
       "node_type": "CLASS",
-      "description": "The `AutoGenAssistantAgentNode` class in Python is a subclass of `AutoGenAgentNode` that represents an assistant agent in a conversational AI system. It overrides the `createAgent` method from the parent class to create an instance of `autogen.AssistantAgent` with specific configurations. This class is used to create an assistant agent that can participate in a conversation, execute code, and respond to system messages.",
+      "description": "The AutoGenAssistantAgentNode class is a subclass of AutoGenAgentNode that represents an assistant agent in an autogeneration system. It overrides the createAgent method to create an instance of the AssistantAgent class from the autogen module, with specific configuration parameters such as name, llm_config, system_message, and code_execution_config.",
       "connection": [
         {
           "next_node": "ai.AutoGen.AutoGenAssistantAgentNode.createAgent",
@@ -63,18 +63,18 @@
     "ai.AutoGen.AutoGenUserProxyNode": {
       "name": "ai.AutoGen.AutoGenUserProxyNode",
       "node_type": "CLASS",
-      "description": "The `AutoGenUserProxyNode` class in Python is a subclass of `AutoGenAgentNode` that represents a user proxy agent in a conversational AI system. It overrides the `createAgent` method to create a `UserProxyAgent` with specific configurations such as the maximum number of consecutive auto replies and the mode of human input. The class also checks for a termination message to end the conversation.",
+      "description": "The AutoGenUserProxyNode class is a subclass of AutoGenAgentNode that represents a user proxy agent in an AI conversation. It has a createAgent method that creates a UserProxyAgent object with specified configurations and returns it. The class is used to initiate a chat between the user proxy agent and other conversable agents, and retrieve the chat history and answer from the user proxy agent.",
       "connection": [
         {
           "next_node": "ai.AutoGen.AutoGenUserProxyNode.createAgent",
           "connection_type": "DEFINES"
         },
         {
-          "next_node": "<builtin>",
+          "next_node": "diagram",
           "connection_type": "USES"
         },
         {
-          "next_node": "diagram",
+          "next_node": "<builtin>",
           "connection_type": "USES"
         },
         {
@@ -87,18 +87,18 @@
     "ai.AutoGen.AutoGenTwoAgentConversation": {
       "name": "ai.AutoGen.AutoGenTwoAgentConversation",
       "node_type": "CLASS",
-      "description": "The `AutoGenTwoAgentConversation` class in Python is used to facilitate a conversation between two agents. It initiates a chat between a user proxy and an assistant, and processes the conversation history to extract the final answer. If the last message in the conversation is \"TERMINATE\", it takes the second last message as the answer, otherwise, it takes the last message as the answer.",
+      "description": "The AutoGenTwoAgentConversation class in the ai.AutoGen module is a type of Node that represents a conversation between two conversable agents. It has a run method that initiates the chat between a user proxy agent and an assistant agent, retrieves the conversation history, and returns the answer provided by the assistant agent.",
       "connection": [
         {
           "next_node": "ai.AutoGen.AutoGenTwoAgentConversation.run",
           "connection_type": "DEFINES"
         },
         {
-          "next_node": "diagram",
+          "next_node": "<builtin>",
           "connection_type": "USES"
         },
         {
-          "next_node": "<builtin>",
+          "next_node": "diagram",
           "connection_type": "USES"
         }
       ],
@@ -107,18 +107,18 @@
     "ai.AutoGen.AutoGenGroupChat": {
       "name": "ai.AutoGen.AutoGenGroupChat",
       "node_type": "CLASS",
-      "description": "The `AutoGenGroupChat` class in Python is used to simulate a group chat scenario. It initializes with various parameters like temperature, model, timeout, and maximum rounds for the group chat. The `run` method initiates the chat with a question and manages the conversation, returning the chat history and the answer to the question.",
+      "description": "The AutoGenGroupChat class in the ai.AutoGen module is a type of Node that represents a group chat conversation. It has a run method that initiates a chat between a user proxy and a group chat manager, and returns the chat history and the answer generated by the manager. The class also has variables for configuring the group chat, such as the maximum number of chat rounds and the system message.",
       "connection": [
         {
           "next_node": "ai.AutoGen.AutoGenGroupChat.run",
           "connection_type": "DEFINES"
         },
         {
-          "next_node": "diagram",
+          "next_node": "autogen",
           "connection_type": "USES"
         },
         {
-          "next_node": "autogen",
+          "next_node": "diagram",
           "connection_type": "USES"
         },
         {
@@ -131,7 +131,7 @@
     "ai.openai": {
       "name": "ai.openai",
       "node_type": "FILE",
-      "description": "The Python file defines classes and functions for interacting with OpenAI's GPT-3 model in a chat-like manner. The `OpenAiChatHistoryItem` class represents a single message in the chat history, with a role (system, user, or assistant) and content. The `runSimpleChat` function takes a history of chat items, a question, and optional parameters for the GPT model and temperature, and returns the updated history and the model's response. The `ChatGptNode` and `OpenAiChatHistoryNode` classes are used to integrate this functionality into a larger system, likely a chatbot or dialogue system.",
+      "description": "The file defines a class for managing chat conversations using OpenAI's ChatGPT model. The `runSimpleChat` function takes a history of chat messages, a question, and optional parameters like the model version and temperature, and returns the updated history and the model's response. The `ChatGptNode` class is a function node that wraps the `runSimpleChat` function, and the `OpenAiChatHistoryNode` class is a starter node that manages the chat history.",
       "connection": [
         {
           "next_node": "ai.openai.OpenAiChatHistoryNode",
@@ -147,7 +147,7 @@
     "ai.openai.OpenAiChatHistoryItem": {
       "name": "ai.openai.OpenAiChatHistoryItem",
       "node_type": "CLASS",
-      "description": "The class \"OpenAiChatHistoryItem\" is a subclass of Python's built-in dictionary. It is used to store a chat history item in a conversation with OpenAI's GPT-3 model. Each instance of this class represents a single message in the chat, with the \"role\" key indicating the sender (system, user, or assistant) and the \"content\" key storing the message text.",
+      "description": "The `OpenAiChatHistoryItem` class is a subclass of `dict` in the `ai.openai` module. It represents a chat history item with a role (system, user, or assistant) and content. It is used to create and manage chat history items in a chat conversation.",
       "connection": [
         {
           "next_node": "ai",
@@ -163,7 +163,7 @@
     "ai.openai.ChatGptNode": {
       "name": "ai.openai.ChatGptNode",
       "node_type": "CLASS",
-      "description": "The `ChatGptNode` class in the provided Python code is a subclass of `FunctionNode`. It is used to run a simple chat with the OpenAI GPT model. The class is initialized with data and uses the `runSimpleChat` function to interact with the GPT model.",
+      "description": "The ChatGptNode class in Python is a type of FunctionNode that represents a node in a diagram. It uses the runSimpleChat function to interact with the OpenAI ChatGPT model and returns a tuple containing the updated chat history and the model's response to a given question. The class is used to integrate the ChatGPT functionality into a diagram-based system.",
       "connection": [
         {
           "next_node": "ai.openai.ChatGptNode.__init__",
@@ -179,7 +179,7 @@
     "ai.openai.OpenAiChatHistoryNode": {
       "name": "ai.openai.OpenAiChatHistoryNode",
       "node_type": "CLASS",
-      "description": "The OpenAiChatHistoryNode class in Python is a type of StarterNode that manages the history of a chat conversation. It has a run method that returns a dictionary containing the chat history. The class is used to append new chat items to the existing history and return the updated history.",
+      "description": "The OpenAiChatHistoryNode class is a subclass of StarterNode that manages the history of a chat conversation. It has a run method that appends new chat items to the existing history and returns the updated history as a dictionary. The class is used to keep track of the chat history in an AI chatbot system.",
       "connection": [
         {
           "next_node": "ai.openai.OpenAiChatHistoryNode.run",
