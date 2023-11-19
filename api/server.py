@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from data_structures.graph import Graph
 from graph_generators.file_graph_generator import create_complete_graph, create_packages_graph, create_files_classes_graphs, create_function_graph
+from graph_generators.openAiIntegration import ai_quiry_with_graph
 
 app = Flask(__name__)
 CORS(app, origins="*")
@@ -36,7 +37,7 @@ def get_function_graph(project: str, className: str):
     create_graph_if_empty(project)
     return create_function_graph(complete_graphs[project], className).model_dump_json() 
 
-@app.route("ask/<project>/<package>", methods=["POST"])
+@app.route("/ask/<project>/<package>", methods=["POST"])
 def ask_package(project: str, package: str):
     create_graph_if_empty(project)
     try:
