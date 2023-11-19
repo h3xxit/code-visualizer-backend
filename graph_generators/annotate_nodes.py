@@ -24,7 +24,7 @@ class Annotator:
             return node.description
 
         # external libraries
-        if node.path == "<external>" or node.path == "":
+        if node.path == "":
             node.description = "External node"
             return node.description
 

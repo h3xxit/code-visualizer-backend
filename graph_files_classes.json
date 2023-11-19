@@ -1,0 +1,197 @@
+{
+  "nodes": {
+    "ai.AutoGen": {
+      "name": "ai.AutoGen",
+      "node_type": "FILE",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai.AutoGen.AutoGenGroupChat",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "autogen",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram.Node",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\AutoGen.py"
+    },
+    "ai.AutoGen.AutoGenAgentNode": {
+      "name": "ai.AutoGen.AutoGenAgentNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai.AutoGen.AutoGenAgentNode.createAgent",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\AutoGen.py"
+    },
+    "ai.AutoGen.AutoGenAssistantAgentNode": {
+      "name": "ai.AutoGen.AutoGenAssistantAgentNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai.AutoGen.AutoGenAssistantAgentNode.createAgent",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram.BaseNodes",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "autogen",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\AutoGen.py"
+    },
+    "ai.AutoGen.AutoGenUserProxyNode": {
+      "name": "ai.AutoGen.AutoGenUserProxyNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai.AutoGen.AutoGenUserProxyNode.createAgent",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "autogen",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\AutoGen.py"
+    },
+    "ai.AutoGen.AutoGenTwoAgentConversation": {
+      "name": "ai.AutoGen.AutoGenTwoAgentConversation",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai.AutoGen.AutoGenTwoAgentConversation.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\AutoGen.py"
+    },
+    "ai.AutoGen.AutoGenGroupChat": {
+      "name": "ai.AutoGen.AutoGenGroupChat",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai.AutoGen.AutoGenGroupChat.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "autogen",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\AutoGen.py"
+    },
+    "ai.openai": {
+      "name": "ai.openai",
+      "node_type": "FILE",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai.openai.OpenAiChatHistoryNode",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "ai.openai",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\openai.py"
+    },
+    "ai.openai.OpenAiChatHistoryItem": {
+      "name": "ai.openai.OpenAiChatHistoryItem",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\openai.py"
+    },
+    "ai.openai.ChatGptNode": {
+      "name": "ai.openai.ChatGptNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai.openai.ChatGptNode.__init__",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\openai.py"
+    },
+    "ai.openai.OpenAiChatHistoryNode": {
+      "name": "ai.openai.OpenAiChatHistoryNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "ai.openai.OpenAiChatHistoryNode.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "ai",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\ai\\openai.py"
+    }
+  },
+  "path_to_project": "..\\test_project"
+}
