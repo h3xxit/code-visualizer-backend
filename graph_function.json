@@ -1,56 +1,52 @@
 {
   "nodes": {
-    "ai.AutoGen": {
-      "name": "ai.AutoGen",
-      "node_type": "FILE",
-      "description": "The file defines classes for creating conversational agents and managing their interactions. The `AutoGenAgentNode` class is an abstract base class for creating agents with specific configurations. The `AutoGenAssistantAgentNode` and `AutoGenUserProxyNode` classes inherit from `AutoGenAgentNode` and implement the `createAgent` method to create specific types of agents. The `AutoGenTwoAgentConversation` and `AutoGenGroupChat` classes manage conversations between two agents and a group of agents respectively.",
+    "diagram.BaseNodes.StarterNode": {
+      "name": "diagram.BaseNodes.StarterNode",
+      "node_type": "CLASS",
+      "description": "",
       "connection": [
         {
-          "next_node": "ai.AutoGen.AutoGenGroupChat",
+          "next_node": "diagram.BaseNodes.StarterNode.onOutputCleared",
           "connection_type": "DEFINES"
         },
         {
-          "next_node": "autogen",
-          "connection_type": "USES"
+          "next_node": "diagram.Node.Node",
+          "connection_type": "INHERITS_FROM"
         },
         {
-          "next_node": "diagram.Node",
-          "connection_type": "USES"
+          "next_node": "abc.ABC",
+          "connection_type": "INHERITS_FROM"
         },
         {
           "next_node": "<builtin>",
           "connection_type": "USES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\ai\\AutoGen.py"
+      "path": "..\\test_project\\diagram\\BaseNodes.py"
     },
-    "ai.AutoGen.AutoGenAgentNode": {
-      "name": "ai.AutoGen.AutoGenAgentNode",
-      "node_type": "CLASS",
-      "description": "The AutoGenAgentNode class is a subclass of StarterNode that represents an agent in an AI conversation. It has a run method that creates and returns an agent based on the provided configuration. The class is used as a base class for creating specific types of agents, such as AutoGenAssistantAgentNode and AutoGenUserProxyNode.",
+    "diagram.BaseNodes": {
+      "name": "diagram.BaseNodes",
+      "node_type": "FILE",
+      "description": "",
       "connection": [
         {
-          "next_node": "ai.AutoGen.AutoGenAgentNode.createAgent",
+          "next_node": "diagram.BaseNodes.ConditionalNode",
           "connection_type": "DEFINES"
         },
         {
           "next_node": "abc",
           "connection_type": "USES"
-        }
-      ],
-      "path": "..\\test_project\\ai\\AutoGen.py"
-    },
-    "ai.AutoGen.AutoGenAssistantAgentNode": {
-      "name": "ai.AutoGen.AutoGenAssistantAgentNode",
-      "node_type": "CLASS",
-      "description": "The AutoGenAssistantAgentNode class is a subclass of AutoGenAgentNode that represents an assistant agent in an autogeneration system. It overrides the createAgent method to create an instance of the AssistantAgent class from the autogen module, with specific configuration parameters such as name, llm_config, system_message, and code_execution_config.",
-      "connection": [
-        {
-          "next_node": "ai.AutoGen.AutoGenAssistantAgentNode.createAgent",
-          "connection_type": "DEFINES"
         },
         {
-          "next_node": "autogen",
+          "next_node": "<builtin>",
           "connection_type": "USES"
         },
         {
@@ -58,39 +54,15 @@
           "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\ai\\AutoGen.py"
+      "path": "..\\test_project\\diagram\\BaseNodes.py"
     },
-    "ai.AutoGen.AutoGenUserProxyNode": {
-      "name": "ai.AutoGen.AutoGenUserProxyNode",
+    "diagram.Node.Node": {
+      "name": "diagram.Node.Node",
       "node_type": "CLASS",
-      "description": "The AutoGenUserProxyNode class is a subclass of AutoGenAgentNode that represents a user proxy agent in an AI conversation. It has a createAgent method that creates a UserProxyAgent object with specified configurations and returns it. The class is used to initiate a chat between the user proxy agent and other conversable agents, and retrieve the chat history and answer from the user proxy agent.",
+      "description": "",
       "connection": [
         {
-          "next_node": "ai.AutoGen.AutoGenUserProxyNode.createAgent",
-          "connection_type": "DEFINES"
-        },
-        {
-          "next_node": "diagram",
-          "connection_type": "USES"
-        },
-        {
-          "next_node": "<builtin>",
-          "connection_type": "USES"
-        },
-        {
-          "next_node": "autogen",
-          "connection_type": "USES"
-        }
-      ],
-      "path": "..\\test_project\\ai\\AutoGen.py"
-    },
-    "ai.AutoGen.AutoGenTwoAgentConversation": {
-      "name": "ai.AutoGen.AutoGenTwoAgentConversation",
-      "node_type": "CLASS",
-      "description": "The AutoGenTwoAgentConversation class in the ai.AutoGen module is a type of Node that represents a conversation between two conversable agents. It has a run method that initiates the chat between a user proxy agent and an assistant agent, retrieves the conversation history, and returns the answer provided by the assistant agent.",
-      "connection": [
-        {
-          "next_node": "ai.AutoGen.AutoGenTwoAgentConversation.run",
+          "next_node": "diagram.Node.Node.checkInput",
           "connection_type": "DEFINES"
         },
         {
@@ -98,99 +70,499 @@
           "connection_type": "USES"
         },
         {
-          "next_node": "diagram",
+          "next_node": "abc",
           "connection_type": "USES"
+        },
+        {
+          "next_node": "pydantic.BaseModel",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "abc.ABC",
+          "connection_type": "INHERITS_FROM"
         }
       ],
-      "path": "..\\test_project\\ai\\AutoGen.py"
+      "path": "..\\test_project\\diagram\\Node.py"
     },
-    "ai.AutoGen.AutoGenGroupChat": {
-      "name": "ai.AutoGen.AutoGenGroupChat",
-      "node_type": "CLASS",
-      "description": "The AutoGenGroupChat class in the ai.AutoGen module is a type of Node that represents a group chat conversation. It has a run method that initiates a chat between a user proxy and a group chat manager, and returns the chat history and the answer generated by the manager. The class also has variables for configuring the group chat, such as the maximum number of chat rounds and the system message.",
-      "connection": [
-        {
-          "next_node": "ai.AutoGen.AutoGenGroupChat.run",
-          "connection_type": "DEFINES"
-        },
-        {
-          "next_node": "autogen",
-          "connection_type": "USES"
-        },
-        {
-          "next_node": "diagram",
-          "connection_type": "USES"
-        },
-        {
-          "next_node": "<builtin>",
-          "connection_type": "USES"
-        }
-      ],
-      "path": "..\\test_project\\ai\\AutoGen.py"
-    },
-    "ai.openai": {
-      "name": "ai.openai",
+    "diagram.Node": {
+      "name": "diagram",
       "node_type": "FILE",
-      "description": "The file defines a class for managing chat conversations using OpenAI's ChatGPT model. The `runSimpleChat` function takes a history of chat messages, a question, and optional parameters like the model version and temperature, and returns the updated history and the model's response. The `ChatGptNode` class is a function node that wraps the `runSimpleChat` function, and the `OpenAiChatHistoryNode` class is a starter node that manages the chat history.",
+      "description": "",
       "connection": [
         {
-          "next_node": "ai.openai.OpenAiChatHistoryNode",
+          "next_node": "diagram.Node.Node",
           "connection_type": "DEFINES"
         },
         {
-          "next_node": "ai.openai",
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "abc",
           "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\ai\\openai.py"
+      "path": "..\\test_project\\diagram\\Node.py"
     },
-    "ai.openai.OpenAiChatHistoryItem": {
-      "name": "ai.openai.OpenAiChatHistoryItem",
+    "diagram.BaseNodes.ConditionalNode": {
+      "name": "diagram.BaseNodes.ConditionalNode",
       "node_type": "CLASS",
-      "description": "The `OpenAiChatHistoryItem` class is a subclass of `dict` in the `ai.openai` module. It represents a chat history item with a role (system, user, or assistant) and content. It is used to create and manage chat history items in a chat conversation.",
+      "description": "",
       "connection": [
         {
-          "next_node": "ai",
+          "next_node": "diagram.BaseNodes.ConditionalNode.run",
           "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram.Node.Node",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "abc.ABC",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\BaseNodes.py"
+    },
+    "diagram.Connectors": {
+      "name": "diagram.Connectors",
+      "node_type": "FILE",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.Connectors.OutputConnector",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "typing",
+          "connection_type": "USES"
         },
         {
           "next_node": "<builtin>",
           "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\ai\\openai.py"
+      "path": "..\\test_project\\diagram\\Connectors.py"
     },
-    "ai.openai.ChatGptNode": {
-      "name": "ai.openai.ChatGptNode",
+    "diagram.Connectors.InputConnector": {
+      "name": "diagram.Connectors.InputConnector",
       "node_type": "CLASS",
-      "description": "The ChatGptNode class in Python is a type of FunctionNode that represents a node in a diagram. It uses the runSimpleChat function to interact with the OpenAI ChatGPT model and returns a tuple containing the updated chat history and the model's response to a given question. The class is used to integrate the ChatGPT functionality into a diagram-based system.",
+      "description": "",
       "connection": [
         {
-          "next_node": "ai.openai.ChatGptNode.__init__",
+          "next_node": "diagram.Connectors.InputConnector.onClearCallback",
           "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "pydantic",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "pydantic",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "pydantic.BaseModel",
+          "connection_type": "INHERITS_FROM"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\Connectors.py"
+    },
+    "diagram.Connectors.OutputConnection": {
+      "name": "diagram.Connectors.OutputConnection",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.Connectors.OutputConnection.__init__",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "pydantic.BaseModel",
+          "connection_type": "INHERITS_FROM"
         },
         {
           "next_node": "<builtin>",
           "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\ai\\openai.py"
+      "path": "..\\test_project\\diagram\\Connectors.py"
     },
-    "ai.openai.OpenAiChatHistoryNode": {
-      "name": "ai.openai.OpenAiChatHistoryNode",
+    "diagram.Connectors.OutputConnector": {
+      "name": "diagram.Connectors.OutputConnector",
       "node_type": "CLASS",
-      "description": "The OpenAiChatHistoryNode class is a subclass of StarterNode that manages the history of a chat conversation. It has a run method that appends new chat items to the existing history and returns the updated history as a dictionary. The class is used to keep track of the chat history in an AI chatbot system.",
+      "description": "",
       "connection": [
         {
-          "next_node": "ai.openai.OpenAiChatHistoryNode.run",
+          "next_node": "diagram.Connectors.OutputConnector.__iter__",
           "connection_type": "DEFINES"
         },
         {
-          "next_node": "ai",
+          "next_node": "pydantic.BaseModel",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "<builtin>",
           "connection_type": "USES"
         }
       ],
-      "path": "..\\test_project\\ai\\openai.py"
+      "path": "..\\test_project\\diagram\\Connectors.py"
+    },
+    "diagram.DataStructureNodes": {
+      "name": "diagram.DataStructureNodes",
+      "node_type": "FILE",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.DataStructureNodes.ListCreatorNode",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram.Node.Node",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\DataStructureNodes.py"
+    },
+    "diagram.DataStructureNodes.ListCreatorNode": {
+      "name": "diagram.DataStructureNodes.ListCreatorNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.DataStructureNodes.ListCreatorNode._clearInputs",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram.Node.Node",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\DataStructureNodes.py"
+    },
+    "diagram.Node.Node.inputs": {
+      "name": "diagram.Node.Node.inputs",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram",
+          "connection_type": "DEFINES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\Node.py"
+    },
+    "diagram.DiagramInstance": {
+      "name": "diagram.DiagramInstance",
+      "node_type": "FILE",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.DiagramInstance.DiagramInstance",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "queue",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram.DiagramInstance",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\DiagramInstance.py"
+    },
+    "diagram.DiagramInstance.DiagramInstance": {
+      "name": "diagram.DiagramInstance.DiagramInstance",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.DiagramInstance.DiagramInstance.addInputValueOfNode",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "queue",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\DiagramInstance.py"
+    },
+    "diagram.Node.Diagram.model_validate_json": {
+      "name": "diagram.Node.Diagram.model_validate_json",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.Node.Diagram.model_validate_json.findNode",
+          "connection_type": "DEFINES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\Node.py"
+    },
+    "diagram.Node.Diagram": {
+      "name": "diagram.Node.Diagram",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.Node.Diagram.findNode",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "pydantic.BaseModel",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\Node.py"
+    },
+    "diagram.Node.Diagram.model_validate_json.nodes": {
+      "name": "diagram.Node.Diagram.model_validate_json.nodes",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.Node.Diagram.model_validate_json.nodes.stopInstance",
+          "connection_type": "DEFINES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\Node.py"
+    },
+    "diagram.Node.Diagram.model_validate_json.findNode": {
+      "name": "diagram.Node.Diagram.model_validate_json.findNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.Node.Diagram.model_validate_json.findNode.addInputValue",
+          "connection_type": "DEFINES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\Node.py"
+    },
+    "diagram.FunctionNode": {
+      "name": "diagram.FunctionNode",
+      "node_type": "FILE",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.FunctionNode.FunctionNode",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\FunctionNode.py"
+    },
+    "diagram.FunctionNode.FunctionNode": {
+      "name": "diagram.FunctionNode.FunctionNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.FunctionNode.FunctionNode.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram.Node.Node",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\FunctionNode.py"
+    },
+    "diagram.TextNodes": {
+      "name": "diagram.TextNodes",
+      "node_type": "FILE",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.StartsWithNode",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.TextNode": {
+      "name": "diagram.TextNodes.TextNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.TextNode.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram.BaseNodes.StarterNode",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.NumberNode": {
+      "name": "diagram.TextNodes.NumberNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.NumberNode.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram.BaseNodes.StarterNode",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.ConcatenateNode": {
+      "name": "diagram.TextNodes.ConcatenateNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.ConcatenateNode.run",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram.Node.Node",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
+    },
+    "diagram.TextNodes.StartsWithNode": {
+      "name": "diagram.TextNodes.StartsWithNode",
+      "node_type": "CLASS",
+      "description": "",
+      "connection": [
+        {
+          "next_node": "diagram.TextNodes.StartsWithNode.elseBranch",
+          "connection_type": "DEFINES"
+        },
+        {
+          "next_node": "diagram.BaseNodes.ConditionalNode",
+          "connection_type": "INHERITS_FROM"
+        },
+        {
+          "next_node": "abc",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "<builtin>",
+          "connection_type": "USES"
+        },
+        {
+          "next_node": "diagram",
+          "connection_type": "USES"
+        }
+      ],
+      "path": "..\\test_project\\diagram\\TextNodes.py"
     }
   },
   "path_to_project": "..\\test_project"
